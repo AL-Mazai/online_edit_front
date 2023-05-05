@@ -1,11 +1,11 @@
-<!--我参与的团队-->
+<!--个人信息-->
 <template>
 
 </template>
 
 <script>
 export default {
-    name: "ParticipateTeam"
+    name: "UserInfo"
 }
 </script>
 

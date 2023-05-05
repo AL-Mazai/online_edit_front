@@ -1,11 +1,11 @@
-<!--我创建的团队-->
+<!--更改密码-->
 <template>
 
 </template>
 
 <script>
 export default {
-    name: "CreateTeam"
+    name: "UpdatePassword"
 }
 </script>
 

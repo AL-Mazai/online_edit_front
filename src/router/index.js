@@ -13,8 +13,8 @@ const routes = [
             { path: 'home',name:"主页", component: () => import('../views/Home')},
             { path: 'create_doc',name:"我创建的文档", component: () => import('../views/CreatedDoc')},
             { path: 'participate_doc',name:"我参与的文档", component: () => import('../views/ParticipateDoc')},
-            { path: 'create_team',name:"我创建的团队", component: () => import('../views/CreateTeam')},
-            { path: 'participate_team',name:"我参与的团队", component: () => import('../views/ParticipateTeam')},
+            { path: 'user_info',name:"个人信息", component: () => import('../views/UserInfo')},
+            { path: 'update_password',name:"修改密码", component: () => import('../views/UpdatePassword')},
             { path: 'recycle_station',name:"回收站", component: () => import('../views/RecycleStation')},
         ]
     },
