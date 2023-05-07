@@ -3,7 +3,7 @@
     <el-form class="login-container">
       <h1 class="title">用户登录：</h1>
       <el-form-item>
-        <el-input type="text" placeholder="用户账号" v-model="username" autocomplete="off"></el-input>
+        <el-input type="text" placeholder="用户账号" v-model="email" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item>
         <el-input type="password" placeholder="用户密码" v-model="password" autocomplete="off"></el-input>
@@ -21,26 +21,48 @@
 </template>
 
 <script>
+
+import axios from 'axios'
 export default {
   name: 'Login',
   data: function () {
     return {
-      username: '',
+      email: '',
       password: ''
     }
   },
   methods: {
     doLogin: function () {
-      let username = this.username
+      let email = this.email
       let password = this.password
-      /* let params={
 
-      } */
-      console.log('username=%s,password=%s', username, password)
+      let url = 'http://localhost:8088/user/login'
+
+      let params = {
+        email: email,
+        password: password,
+        methodName: 'userLogin'
+      }
+      console.log(params)
+
+      axios.get(url, {
+        params: params
+      }).then(resp => {
+        console.log(resp)
+        let data = resp.data
+        console.log(data)
+        this.$message({
+          message: data.msg,
+          type: data.code === 1 ? 'success' : 'error'
+        })
+      }).catch(err => {
+        console.log(err)
+      })
     },
     toRegister: function () {
       this.$router.push('/Register')
     }
+
   }
 }
 </script>
