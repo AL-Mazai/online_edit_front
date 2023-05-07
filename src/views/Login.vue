@@ -3,68 +3,80 @@
     <el-form class="login-container">
       <h1 class="title">用户登录：</h1>
       <el-form-item>
-        <el-input type="text" placeholder="用户账号" v-model="email" autocomplete="off"></el-input>
+        <el-input
+          type="text"
+          placeholder="用户账号"
+          v-model="email"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input type="password" placeholder="用户密码" v-model="password" autocomplete="off"></el-input>
+        <el-input
+          type="password"
+          placeholder="用户密码"
+          v-model="password"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="doLogin" style="width: 100%;">登录</el-button>
+        <el-button type="primary" @click="doLogin" style="width: 100%"
+          >登录</el-button
+        >
       </el-form-item>
-      <el-row style="text-align: center;margin-top: -10px;">
+      <el-row style="text-align: center; margin-top: -10px">
         <el-link type="primary" @click="toRegister">用户注册</el-link>
         <el-link type="primary">忘记密码</el-link>
       </el-row>
     </el-form>
   </div>
-
 </template>
 
 <script>
-
-import axios from 'axios'
+import axios from "axios";
 export default {
-  name: 'Login',
+  name: "Login",
   data: function () {
     return {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    };
   },
   methods: {
     doLogin: function () {
-      let email = this.email
-      let password = this.password
+      let email = this.email;
+      let password = this.password;
 
-      let url = 'http://localhost:8088/user/login'
+      let url = "http://localhost:8088/user/login";
 
       let params = {
         email: email,
         password: password,
-        methodName: 'userLogin'
-      }
-      console.log(params)
+        methodName: "userLogin",
+      };
+      console.log(params);
 
-      axios.get(url, {
-        params: params
-      }).then(resp => {
-        console.log(resp)
-        let data = resp.data
-        console.log(data)
-        this.$message({
-          message: data.msg,
-          type: data.code === 1 ? 'success' : 'error'
+      axios
+        .get(url, {
+          params: params,
         })
-      }).catch(err => {
-        console.log(err)
-      })
+        .then((resp) => {
+          console.log(resp);
+          let data = resp.data;
+          console.log(data);
+          this.$message({
+            message: data.msg,
+            type: data.code === 1 ? "success" : "error",
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     toRegister: function () {
-      this.$router.push('/Register')
-    }
-
-  }
-}
+      this.$router.push("/Register");
+    },
+  },
+};
 </script>
 
 <style>
