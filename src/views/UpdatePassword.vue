@@ -72,6 +72,7 @@ export default {
         };
     },
     methods: {
+        //修改密码
         doUpdate() {
             if (this.checkPassword === this.newPassword) {
                 //发送请求

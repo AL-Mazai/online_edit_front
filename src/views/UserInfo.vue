@@ -7,41 +7,24 @@
         <el-descriptions class="Info" title="   " :column="1"  border>
             <el-descriptions-item>
                 <template slot="label">
-                    <i class="el-icon-user" ></i>
-                    用户ID
+                    <i class="el-icon-user" ></i>用户ID
                 </template>
                 {{user.userId}}
             </el-descriptions-item>
             <el-descriptions-item>
                 <template slot="label">
-                    <i class="el-icon-monitor"></i>
-                    用户名
+                    <i class="el-icon-monitor"></i>用户名
                 </template>
-                {{user.userName}}
-                <el-link icon="el-icon-edit" style="color: cornflowerblue; left: 5%"></el-link>
+                {{user.userName }}
             </el-descriptions-item>
             <el-descriptions-item>
                 <template slot="label">
-                    <i class="el-icon-message"></i>
-                    邮箱
+                    <i class="el-icon-message"></i>邮箱
                 </template>
                 {{user.email}}
             </el-descriptions-item>
-            <el-descriptions-item>
-                <template slot="label">
-                    <i class="el-icon-switch-button"></i>
-                    会员
-                </template>
-                <el-tag size="small">是</el-tag>
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template slot="label">
-                    <i class="el-icon-cloudy"></i>
-                    云空间
-                </template>
-                <el-link icon="el-icon-refresh" style="color: cornflowerblue" >同步</el-link>
-            </el-descriptions-item>
         </el-descriptions>
+        <el-button type="warning" style="margin-top: 1vw">修改</el-button>
     </div>
 
 </template>
@@ -56,9 +39,9 @@ export default {
     data(){
         return{
             user: {
-                userId: "",
-                userName: "",
-                email: "",
+                userId: '1',
+                userName: 'zzw',
+                email: '123@qq.com',
             },
         }
     },
@@ -80,7 +63,7 @@ export default {
 
 <style>
 .Info{
-    width: 45%;
+    width: 50%;
     text-align: center;
     margin: auto;
 }

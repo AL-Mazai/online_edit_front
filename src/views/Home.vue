@@ -11,6 +11,10 @@
             <el-button type="primary" style="margin-left: 5px;">新建 <i class="el-icon-plus"></i></el-button>
         </div>
         <div>
+            <span>最近</span>
+            <span>收藏</span>
+        </div>
+        <div>
             <el-table
                 :data="tableData"
                 stripe
@@ -107,3 +111,11 @@ export default {
 
 }
 </script>
+
+<style scoped>
+span{
+    margin: 1vw 0 1vw 2vw;
+    display: inline-block;
+    font-size: 1.5vw;
+}
+</style>
