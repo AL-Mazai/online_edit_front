@@ -60,6 +60,7 @@ export default {
         };
     },
     methods: {
+        //注册
         doRegister() {
             let url = "http://localhost:8088/user/register";
             this.axios.post(url, this.user).then((res) => {

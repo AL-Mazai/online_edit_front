@@ -7,12 +7,12 @@
                 <el-table-column prop="docId" label="序号" width="150"></el-table-column>
                 <el-table-column prop="docName" label="文件名" width="150"></el-table-column>
                 <el-table-column prop="type" label="类型" width="150"></el-table-column>
-                <el-table-column prop="createdTime" label="创建时间" :formatter="dateFormat"></el-table-column>
+                <el-table-column prop="createdTime" label="创建时间" width="150" :formatter="dateFormat"></el-table-column>
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
                         <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                        <el-button type="primary" icon="el-icon-view" @click="getUserOfDoc(scope.row)">查看成员
-                        </el-button>
+                        <el-button type="primary" icon="el-icon-view" @click="getUserOfDoc(scope.row)">查看成员</el-button>
+                        <el-button type="danger" icon="el-icon-delete" @click="deleteDoc(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -49,7 +49,8 @@ export default {
             docId: 0,
             docTableData: [],
             userOfDocTableData: [],
-            userOfDocDialog: false
+            userOfDocDialog: false,
+            deleteDocDialog: false,
         }
     },
     created() {
@@ -68,6 +69,7 @@ export default {
             })
     },
     methods: {
+        //编辑文档
         handleEdit() {
 
         },
@@ -110,6 +112,23 @@ export default {
         //邀请成员参与文档编辑
         invite(){
 
+        },
+        //删除文档
+        deleteDoc(row){
+            this.axios.delete('http://localhost:8088/doc/deleteDocument', {
+                params: {
+                    docId: row.docId
+                }
+            })
+                .then(response => {
+                    location.reload()
+                    // console.log(response.data)
+                    this.$message.success(response.data)
+                })
+                .catch(error => {
+                    // console.log(error.response.data)
+                    this.$message.error(error.response.data)
+                })
         },
         //设置时间格式
         dateFormat(row, column) {
