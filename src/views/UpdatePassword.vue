@@ -6,8 +6,17 @@
             <el-form-item>
                 <el-input
                     type="text"
+                    name="email"
+                    placeholder="邮箱"
+                    v-model="email"
+                    autocomplete="off"
+                ></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                    type="text"
                     placeholder="原密码"
-                    v-model="user.password"
+                    v-model="oldPassword"
                     autocomplete="off"
                 ></el-input>
             </el-form-item>
@@ -15,7 +24,7 @@
                 <el-input
                     type="text"
                     placeholder="新密码"
-                    v-model="user.newPassword"
+                    v-model="newPassword"
                     autocomplete="off"
                 ></el-input>
             </el-form-item>
@@ -23,14 +32,12 @@
                 <el-input
                     type="text"
                     placeholder="确认密码"
-                    v-model="user.checkPassword"
+                    v-model="checkPassword"
                     autocomplete="off"
                 ></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="doUpdate" style="width: 100%">
-                    确认更改
-                </el-button>
+                <el-button type="primary" @click="doUpdate" style="width: 100%">确认更改</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -41,45 +48,53 @@ export default {
     name: "UpdatePassword",
     data() {
         return {
-            user: {
-                password: "",
-                newPassword: "",
-                checkPassword: ""
-            },
-            rules: {//表单规则
-                password: [
-                    { required: true, message: '请输入原密码', trigger: 'blur' },
-                    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-                ],
-                newPassword: [
-                    { required: true, message: '请输入新密码', trigger: 'blur' },
-                    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-                ],
-                checkPassword: [
-                    { required: true, message: '请再次输入新密码', trigger: 'blur' },
-                    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-                ],
-            },
-            dialogFormVisible: false,
 
+            email: '',
+            oldPassword: '',
+            newPassword: '',
+            checkPassword: '',
+
+            // rules: {//表单规则
+            //     password: [
+            //         { required: true, message: '请输入原密码', trigger: 'blur' },
+            //         { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+            //     ],
+            //     newPassword: [
+            //         { required: true, message: '请输入新密码', trigger: 'blur' },
+            //         { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+            //     ],
+            //     checkPassword: [
+            //         { required: true, message: '请再次输入新密码', trigger: 'blur' },
+            //         { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+            //     ],
+            // },
+            dialogFormVisible: false,
         };
     },
     methods: {
         doUpdate() {
-            //发送请求
-            this.axios.post("http://localhost:8088/user/updatePassword", this.user).then((res) => {
-                //打印收到的数据（用于测试）
-                console.log(res.data)
-                //验证
-                if (res.status === 200) {
-                    this.$message.success("修改成功")
-                    this.$router.push('/')
-                }
-            }).catch((err) =>  {//异常
-                if(err.response.status === 401){
-                    this.$message.error(err.response.data)
-                }
-            });
+            if (this.checkPassword === this.newPassword) {
+                //发送请求
+                this.axios.post("http://localhost:8088/user/changePassword", {
+                    email: this.email,
+                    oldPassword: this.oldPassword,
+                    newPassword: this.newPassword,
+                }).then((res) => {
+                    //打印收到的数据（用于测试）
+                    // console.log(res.data)
+                    //验证
+                    if (res.status === 200) {
+                        this.$message.success("修改成功")
+                        this.$router.push('/')
+                    }
+                }).catch((err) => {//异常
+                    if (err.response.status === 401) {
+                        this.$message.error(err.response.data)
+                    }
+                });
+            } else {
+                this.$message.error("两次密码输入不一致！")
+            }
         },
     }
 }
@@ -90,7 +105,7 @@ export default {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
-    padding-top: 10%;
+    /*padding-top: 5%;*/
     background-repeat: no-repeat;
     background-position: center right;
     background-size: 100%;

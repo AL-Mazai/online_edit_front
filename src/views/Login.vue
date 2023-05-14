@@ -58,7 +58,6 @@ export default {
             }).catch((err) =>  {//异常
                 if(err.response.status === 401){
                     this.$message.error(err.response.data)
-                    console.log(err.response.data)
                 }
             });
         },
