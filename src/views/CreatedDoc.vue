@@ -11,8 +11,18 @@
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
                         <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                        <el-button type="primary" icon="el-icon-view" @click="getUserOfDoc(scope.row)">查看成员</el-button>
-                        <el-button type="danger" icon="el-icon-delete" @click="deleteDoc(scope.row)">删除</el-button>
+                        <el-button type="primary" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
+                        <!--删除提示框-->
+                        <el-popconfirm
+                            confirm-button-text='确定'
+                            cancel-button-text='取消'
+                            icon="el-icon-info"
+                            icon-color="red"
+                            title="您确定删除吗？"
+                            @confirm="deleteDoc(scope.row)"
+                        >
+                            <el-button type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">删除</el-button>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -27,7 +37,17 @@
                     <el-table-column property="email" label="邮箱"></el-table-column>
                     <el-table-column label="操作">
                         <template v-slot:default="scope">
-                            <el-button type="danger" icon="el-icon-delete" @click="deleteUserOfDoc(scope.row)">删除</el-button>
+                            <!--删除提示框-->
+                            <el-popconfirm
+                                confirm-button-text='确定'
+                                cancel-button-text='取消'
+                                icon="el-icon-info"
+                                icon-color="red"
+                                title="您确定删除吗？"
+                                @confirm="deleteUserOfDoc(scope.row.userId)"
+                            >
+                                <el-button type="danger" icon="el-icon-delete" slot="reference">踢除</el-button>
+                            </el-popconfirm>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -50,37 +70,40 @@ export default {
             docTableData: [],
             userOfDocTableData: [],
             userOfDocDialog: false,
-            deleteDocDialog: false,
         }
     },
     created() {
-        this.axios.get('http://localhost:8088/user/getAllDocCreate', {
-            params: {
-                userId: this.userId
-            }
-        })
-            .then(response => {
-                // console.log(response.data)//测试
-                this.docTableData = response.data
-            })
-            .catch(error => {
-                console.log(error)
-                // this.$message.info(error.data)
-            })
+        this.loadDoc()
     },
     methods: {
+        //初始化，获取所有文档
+        loadDoc(){
+            this.axios.get('http://localhost:8088/user/getAllDocCreate', {
+                params: {
+                    userId: this.userId
+                }
+            })
+                .then(response => {
+                    // console.log(response.data)//测试
+                    this.docTableData = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                    // this.$message.info(error.data)
+                })
+        },
         //编辑文档
         handleEdit() {
 
         },
         //获取文档的所有参与者
-        getUserOfDoc(row) {
-            this.docId = row.docId //获取文档的id
+        getUserOfDoc(docId) {
+            this.docId = docId //获取文档的id
             // console.log(row.docId)//测试
             this.userOfDocDialog = true
             this.axios.get('http://localhost:8088/doc/selectAllUserOfDocument', {
                 params: {
-                    docId: this.docId
+                    docId: docId
                 }
             })
                 .then(response => {
@@ -93,16 +116,18 @@ export default {
                 })
         },
         //踢除文档的某个参与者
-        deleteUserOfDoc(row) {
+        deleteUserOfDoc(userId) {
             this.axios.delete('http://localhost:8088/access/deleteUserOfDoc', {
                 params: {
-                    userId: row.userId,
+                    userId: userId,
                     docId: this.docId
                 }
             })
                 .then(response => {
                     // console.log(response.data)
                     this.$message.success(response.data)
+                    //重新获取
+                    this.getUserOfDoc(this.docId)
                 })
                 .catch(error => {
                     // console.log(error.response.data)
@@ -121,9 +146,12 @@ export default {
                 }
             })
                 .then(response => {
-                    location.reload()
                     // console.log(response.data)
                     this.$message.success(response.data)
+                    //重新获取
+                    this.loadDoc()
+                    //更新页面
+                    // location.reload()
                 })
                 .catch(error => {
                     // console.log(error.response.data)

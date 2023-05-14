@@ -15,8 +15,8 @@
         <!--标签页-->
         <div>
             <el-tabs v-model="currentTab">
-                <el-tab-pane label="最近" name="first"></el-tab-pane>
-                <el-tab-pane label="收藏" name="second"></el-tab-pane>
+                <el-tab-pane label="最近" name="first" @tab-click="testTab"></el-tab-pane>
+                <el-tab-pane label="收藏" name="second" @tab-click="testTab"></el-tab-pane>
             </el-tabs>
         </div>
         <!--数据栏-->
@@ -103,7 +103,7 @@ export default {
         reset() {
             this.name = '';
         },
-        //编辑文档函数
+        //编辑文档
         handleEdit() {
 
         },
@@ -156,6 +156,9 @@ export default {
             }
             return this.$moment(date).format("YYYY-MM-DD");
         },
+        testTab() {
+            alert("hello")
+        }
     },
 
 }

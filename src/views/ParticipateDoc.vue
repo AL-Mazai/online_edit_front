@@ -38,7 +38,7 @@ export default {
     name: "ParticipateDoc",
     data() {
         return {
-            userId: 4,
+            userId: 1,
             tableData: [],
         }
     },
