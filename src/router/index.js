@@ -18,11 +18,13 @@ const routes = [
             {path: "recycle_station", name: "回收站", component: () => import("../views/RecycleStation")},
         ],
     },
+    //添加登录页面路由
     {
         path: "/login",
         name: "login",
         component: () => import("../views/Login"),
     },
+    //添加注册页面路由
     {
         path: "/register",
         name: "register",
