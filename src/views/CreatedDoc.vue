@@ -3,7 +3,7 @@
     <div>
         <!--文档列表-->
         <div>
-            <el-table :data="docTableData" stripe style="width: 100%">
+            <el-table :data="showTableData" stripe style="width: 100%">
                 <el-table-column prop="docId" label="序号" width="150"></el-table-column>
                 <el-table-column prop="docName" label="文件名" width="150"></el-table-column>
                 <el-table-column prop="type" label="类型" width="150"></el-table-column>
@@ -11,7 +11,7 @@
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
                         <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                        <el-button type="primary" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
+                        <el-button type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
                         <!--删除提示框-->
                         <el-popconfirm
                             confirm-button-text='确定'
@@ -26,6 +26,18 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!--分页-->
+            <el-pagination
+                background
+                layout="total, sizes, prev, pager, next, jumper"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageIndex"
+                :page-size="pageSize"
+                :page-sizes="[5, 10, 20, 50]"
+                :total="total"
+            >
+            </el-pagination>
         </div>
         <!--查看文档参与者对话框-->
         <div>
@@ -70,10 +82,25 @@ export default {
             docTableData: [],
             userOfDocTableData: [],
             userOfDocDialog: false,
+            /***分页变量****/
+            pageIndex: 1, // 第几页
+            pageSize: 5, // 每页几条数据
+            total: 0, // 总条目数
+            showTableData: [], // 当前展示的数据
         }
     },
     created() {
         this.loadDoc()
+    },
+    mounted() {
+        //在组件被挂载到DOM后执行,在这里中,使用setTimeout()函数来延迟0.5秒执行代码块内的逻辑
+        setTimeout(() => {
+            // 获取总条目数
+            this.total = this.docTableData.length;
+            // 根据当前是第几页、每页展示几条，去截取需要展示的数据
+            this.getShowTableData();
+            // console.log(this.showTableData)
+        }, 500);
     },
     methods: {
         //初始化，获取所有文档
@@ -92,6 +119,31 @@ export default {
                     // this.$message.info(error.data)
                 })
         },
+        /********************分页*******************/
+        //获取当前页数据
+        getShowTableData() {
+            // 获取截取开始索引
+            let begin = (this.pageIndex - 1) * this.pageSize;
+            // 获取截取结束索引
+            let end = this.pageIndex * this.pageSize;
+            // 通过索引去截取当前页要展示的数据
+            this.showTableData = this.docTableData.slice(begin, end);
+            // console.log(this.showTableData)
+        },
+        // 当前页数改变，重新截取
+        handleCurrentChange(currentPage) {
+            // console.log(currentPage)
+            this.pageIndex = currentPage;
+            this.getShowTableData();
+        },
+        // 每个页面条目数改变，重新截取
+        handleSizeChange(pageSize) {
+            // console.log(pageSize)
+            this.pageIndex = 1;
+            this.pageSize = pageSize;
+            this.getShowTableData();
+        },
+        /********************分页*******************/
         //编辑文档
         handleEdit() {
 
