@@ -4,10 +4,10 @@
         <el-form class="update-container" :model="form" :rules="rules">
             <h1 class="title">修改密码</h1>
             <el-form-item label="邮箱" prop="email">
-                <el-input type="text" name="email" v-model="form.email" autocomplete="off"></el-input>
+                <el-input type="text" name="email" v-model="form.email" autocomplete="off" disabled></el-input>
             </el-form-item>
             <el-form-item label="旧密码" prop="oldPassword">
-                <el-input type="password" v-model="form.oldPassword" autocomplete="off" show-password></el-input>
+                <el-input type="password" v-model="form.oldPassword" autocomplete="off"  show-password></el-input>
             </el-form-item>
             <el-form-item label="新密码" prop="newPassword">
                 <el-input type="password" v-model="form.newPassword" autocomplete="off" show-password></el-input>
@@ -28,8 +28,8 @@ export default {
     data() {
         return {
             form: {
-                email: '',
-                oldPassword: '',
+                email: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).email,
+                oldPassword: localStorage.getItem("password"),
                 newPassword: '',
                 checkPassword: '',
             },
@@ -51,30 +51,27 @@ export default {
                     {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}
                 ],
             },
-            dialogFormVisible: false,
         };
     },
     methods: {
         //修改密码
         doUpdate() {
-            if (this.checkPassword === this.newPassword) {
+            // console.log((localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).password,)
+            if (this.form.checkPassword === this.form.newPassword) {
                 //发送请求
                 this.axios.post("http://localhost:8088/user/changePassword", {
                     email: this.form.email,
                     oldPassword: this.form.oldPassword,
                     newPassword: this.form.newPassword,
                 }).then((res) => {
-                    //打印收到的数据（用于测试）
-                    // console.log(res.data)
                     //验证
                     if (res.status === 200) {
+                        localStorage.setItem("password", res.data.password)//存储新密码
                         this.$message.success("修改成功")
                         this.$router.push('/')
                     }
                 }).catch((err) => {//异常
-                    if (err.response.status === 401) {
-                        this.$message.error(err.response.data)
-                    }
+                    this.$message.error(err.response.data)
                 });
             } else {
                 this.$message.error("两次密码输入不一致！")
