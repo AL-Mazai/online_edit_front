@@ -175,11 +175,11 @@ export default {
         },
         //是否启用文档
         changeStatus(row) {
+            // console.log(row.status)
             //更改状态
-            row.enable = !row.enable
             this.axios.post("http://localhost:8088/doc/changeDocStatus", {
                 docId: row.docId,
-                status: row.enable
+                status: row.status
             }).then(res => {
                 this.$message.success(res.data)
             }).catch(error => {
