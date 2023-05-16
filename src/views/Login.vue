@@ -3,10 +3,12 @@
         <el-form class="login-container" :rules="rules" ref="user" :model="user">
             <h1 class="title">用户登录</h1>
             <el-form-item prop="email">
-                <el-input type="text" placeholder="用户账号" v-model="user.email" autocomplete="off"></el-input>
+                <el-input type="text" placeholder="用户账号" prefix-icon="el-icon-user"
+                          v-model="user.email" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item prop="password">
-                <el-input type="password" placeholder="用户密码" v-model="user.password" autocomplete="off"></el-input>
+                <el-input type="password" placeholder="用户密码" prefix-icon="el-icon-lock"
+                          show-password v-model="user.password" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="doLogin" style="width: 100%;">登录</el-button>
@@ -52,12 +54,14 @@ export default {
                 console.log(res.data)
                 //验证
                 if (res.status === 200) {
+                    localStorage.setItem("token", res.data.token)
+                    localStorage.setItem("user", JSON.stringify(res.data.user))  // 存储用户信息到浏览器
                     this.$message.success("登陆成功")
                     this.$router.push('/')
                 }
             }).catch((err) =>  {//异常
                 if(err.response.status === 401){
-                    this.$message.error(err.response.data)
+                    this.$message.error("用户名或密码错误")
                 }
             });
         },

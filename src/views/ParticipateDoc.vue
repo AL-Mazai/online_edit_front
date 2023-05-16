@@ -33,7 +33,7 @@ export default {
     name: "ParticipateDoc",
     data() {
         return {
-            userId: 1,
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             allDocParTableData: [],
             /***分页变量****/
             pageIndex: 1, // 第几页

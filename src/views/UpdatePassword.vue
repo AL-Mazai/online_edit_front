@@ -1,19 +1,19 @@
 <!--更改密码-->
 <template>
     <div class="update-wrap">
-        <el-form class="update-container">
+        <el-form class="update-container" :model="form" :rules="rules">
             <h1 class="title">修改密码</h1>
-            <el-form-item>
-                <el-input type="text" name="email" placeholder="邮箱" v-model="email" autocomplete="off"></el-input>
+            <el-form-item label="邮箱" prop="email">
+                <el-input type="text" name="email" v-model="form.email" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item>
-                <el-input type="text" placeholder="原密码" v-model="oldPassword" autocomplete="off"></el-input>
+            <el-form-item label="旧密码" prop="oldPassword">
+                <el-input type="password" v-model="form.oldPassword" autocomplete="off" show-password></el-input>
             </el-form-item>
-            <el-form-item>
-                <el-input type="text" placeholder="新密码" v-model="newPassword" autocomplete="off"></el-input>
+            <el-form-item label="新密码" prop="newPassword">
+                <el-input type="password" v-model="form.newPassword" autocomplete="off" show-password></el-input>
             </el-form-item>
-            <el-form-item>
-                <el-input type="text" placeholder="确认密码" v-model="checkPassword" autocomplete="off"></el-input>
+            <el-form-item label="确认密码" prop="checkPassword">
+                <el-input type="password"  v-model="form.checkPassword" autocomplete="off" show-password></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="doUpdate" style="width: 100%">确认更改</el-button>
@@ -27,26 +27,30 @@ export default {
     name: "UpdatePassword",
     data() {
         return {
-
-            email: '',
-            oldPassword: '',
-            newPassword: '',
-            checkPassword: '',
-
-            // rules: {//表单规则
-            //     password: [
-            //         { required: true, message: '请输入原密码', trigger: 'blur' },
-            //         { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-            //     ],
-            //     newPassword: [
-            //         { required: true, message: '请输入新密码', trigger: 'blur' },
-            //         { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-            //     ],
-            //     checkPassword: [
-            //         { required: true, message: '请再次输入新密码', trigger: 'blur' },
-            //         { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-            //     ],
-            // },
+            form: {
+                email: '',
+                oldPassword: '',
+                newPassword: '',
+                checkPassword: '',
+            },
+            rules: {//表单规则
+                email: [
+                    {required: true, message: '请输入邮箱', trigger: 'blur'},
+                    {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}
+                ],
+                oldPassword: [
+                    {required: true, message: '请输入原密码', trigger: 'blur'},
+                    {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}
+                ],
+                newPassword: [
+                    {required: true, message: '请输入新密码', trigger: 'blur'},
+                    {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}
+                ],
+                checkPassword: [
+                    {required: true, message: '请再次输入新密码', trigger: 'blur'},
+                    {min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur'}
+                ],
+            },
             dialogFormVisible: false,
         };
     },
@@ -56,9 +60,9 @@ export default {
             if (this.checkPassword === this.newPassword) {
                 //发送请求
                 this.axios.post("http://localhost:8088/user/changePassword", {
-                    email: this.email,
-                    oldPassword: this.oldPassword,
-                    newPassword: this.newPassword,
+                    email: this.form.email,
+                    oldPassword: this.form.oldPassword,
+                    newPassword: this.form.newPassword,
                 }).then((res) => {
                     //打印收到的数据（用于测试）
                     // console.log(res.data)

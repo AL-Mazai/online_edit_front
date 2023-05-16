@@ -89,7 +89,7 @@ export default {
     name: "CreatedDoc",
     data() {
         return {
-            userId: 1,
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             docId: 0,
             docTableData: [],
             userOfDocTableData: [],

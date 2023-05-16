@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Manage from "@/views/Manage";
+import store from "@/store";
 
 Vue.use(VueRouter);
 
@@ -36,5 +37,20 @@ const router = new VueRouter({
     mode: "history",
     routes,
 });
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+    localStorage.setItem("currentPathName", to.name)  // 设置当前的路由名称，为了在Header组件中去使用
+    store.commit("setPath")  // 触发store的数据更新
+    /***************检测是否有token，若无则返回登录页*****************/
+    let user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null
+    const isLogin = !!user
+    //放行登录页和注册页
+    if (to.path === '/login' || to.path === '/register') {
+        next()
+    }else {
+        isLogin ? next() : next('/login')
+    }
+})
 
 export default router;
