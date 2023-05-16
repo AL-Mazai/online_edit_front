@@ -2,14 +2,14 @@
 <template>
     <div>
         <!--功能栏-->
-        <div style="margin: 10px 0">
+        <div >
             <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search"
                       v-model="fileName"></el-input>
             <el-button type="primary" style="margin-left: 5px;" @click="searchByName">搜索 <i
                 class="el-icon-search"></i></el-button>
             <el-button type="primary" style="margin-left: 5px;" @click="refresh">刷新 <i class="el-icon-refresh"></i>
             </el-button>
-            <el-button type="primary" style="margin-left: 5px;" @click="createDoc()">新建 <i class="el-icon-plus"></i>
+            <el-button type="primary" style="margin-left: 5px;" @click="createDoc">新建 <i class="el-icon-plus"></i>
             </el-button>
         </div>
         <!--数据栏-->
@@ -98,25 +98,11 @@ export default {
             pageNum: 1,
             pageSize: 5,
             total: 0
-            // pageIndex: 1, // 第几页
-            // pageSize: 5, // 每页几条数据
-            // total: 0, // 总条目数
-            // showTableData: [], // 当前展示的数据
         }
     },
     created() {
         this.getAllDoc()
     },
-    // mounted() {
-    //     //在组件被挂载到DOM后执行,在这里中,使用setTimeout()函数来延迟0.5秒执行代码块内的逻辑
-    //     setTimeout(() => {
-    //         // 获取总条目数
-    //         this.total = this.allDocTableData.length;
-    //         // 根据当前是第几页、每页展示几条，去截取需要展示的数据
-    //         this.getShowTableData();
-    //         console.log(this.showTableData)
-    //     }, 500);
-    // },
     methods: {
         //重置主页搜索框
         reset() {
@@ -136,7 +122,7 @@ export default {
                 }
             })
                 .then(response => {
-                    console.log(response.data)//测试
+                    // console.log(response.data.docList)//测试
                     this.allDocTableData = response.data.docList
                     this.total = response.data.total
                 })
@@ -149,39 +135,18 @@ export default {
 
         },
         /********************分页*******************/
+        //数据量改变
         handleSizeChange(pageSize) {
             // console.log(pageSize)
             this.pageSize = pageSize
             this.getAllDoc()
         },
+        //页数改变
         handleCurrentChange(pageNum) {
             // console.log(pageNum)
             this.pageNum = pageNum
             this.getAllDoc()
         },
-        // //获取当前页数据
-        // getShowTableData() {
-        //     // 获取截取开始索引
-        //     let begin = (this.pageIndex - 1) * this.pageSize;
-        //     // 获取截取结束索引
-        //     let end = this.pageIndex * this.pageSize;
-        //     // 通过索引去截取当前页要展示的数据
-        //     this.showTableData = this.allDocTableData.slice(begin, end);
-        //     // console.log(this.showTableData)
-        // },
-        // // 当前页数改变，重新截取
-        // handleCurrentChange(currentPage) {
-        //     // console.log(currentPage)
-        //     this.pageIndex = currentPage;
-        //     this.getShowTableData();
-        // },
-        // // 每个页面条目数改变，重新截取
-        // handleSizeChange(pageSize) {
-        //     // console.log(pageSize)
-        //     this.pageIndex = 1;
-        //     this.pageSize = pageSize;
-        //     this.getShowTableData();
-        // },
         /********************分页*******************/
         //新建文档
         createDoc() {

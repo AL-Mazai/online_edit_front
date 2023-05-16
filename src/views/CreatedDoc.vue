@@ -4,14 +4,24 @@
         <!--文档列表-->
         <div>
             <el-table :data="showTableData" stripe style="width: 100%">
-                <el-table-column prop="docId" label="序号" width="150"></el-table-column>
-                <el-table-column prop="docName" label="文件名" width="150"></el-table-column>
-                <el-table-column prop="type" label="类型" width="150"></el-table-column>
-                <el-table-column prop="createdTime" label="创建时间" width="150" :formatter="dateFormat"></el-table-column>
+                <el-table-column prop="docId" label="序号" width="100"></el-table-column>
+                <el-table-column prop="docName" label="文件名" width="120"></el-table-column>
+                <el-table-column prop="type" label="类型" width="120"></el-table-column>
+                <el-table-column prop="createdTime" label="创建时间" width="150"
+                                 :formatter="dateFormat"></el-table-column>
+                <!--是否启用-->
+                <el-table-column prop="type" label="是否启用" width="150">
+                    <template v-slot:default="scope">
+                        <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ccc"
+                                   @change="changeStatus(scope.row)"></el-switch>
+                    </template>
+                </el-table-column>
+                <!--操作-->
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
                         <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                        <el-button type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
+                        <el-button type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员
+                        </el-button>
                         <!--删除提示框-->
                         <el-popconfirm
                             confirm-button-text='确定'
@@ -21,7 +31,9 @@
                             title="您确定删除吗？"
                             @confirm="deleteDoc(scope.row)"
                         >
-                            <el-button type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">删除</el-button>
+                            <el-button type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">
+                                删除
+                            </el-button>
                         </el-popconfirm>
                     </template>
                 </el-table-column>
@@ -104,7 +116,7 @@ export default {
     },
     methods: {
         //初始化，获取所有文档
-        loadDoc(){
+        loadDoc() {
             this.axios.get('http://localhost:8088/user/getAllDocCreate', {
                 params: {
                     userId: this.userId
@@ -115,9 +127,24 @@ export default {
                     this.docTableData = response.data
                 })
                 .catch(error => {
-                    console.log(error)
-                    // this.$message.info(error.data)
+                    // console.log(error)
+                    this.$message.info(error.data)
                 })
+        },
+        //是否启用文档
+        changeStatus(row) {
+            //更改状态
+            row.enable = !row.enable
+            this.axios.post("http://localhost:8088/doc/changeDocStatus", {
+                docId: row.docId,
+                status: row.enable
+            }).then(res => {
+                if (res.status === 200) {
+                    this.$message.success(res.data)
+                }
+            }).catch(error => {
+                this.$message.error(error.response.data)
+            })
         },
         /********************分页*******************/
         //获取当前页数据
@@ -187,11 +214,11 @@ export default {
                 })
         },
         //邀请成员参与文档编辑
-        invite(){
+        invite() {
 
         },
         //删除文档
-        deleteDoc(row){
+        deleteDoc(row) {
             this.axios.delete('http://localhost:8088/doc/deleteDocument', {
                 params: {
                     docId: row.docId

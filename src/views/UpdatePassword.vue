@@ -4,37 +4,16 @@
         <el-form class="update-container">
             <h1 class="title">修改密码</h1>
             <el-form-item>
-                <el-input
-                    type="text"
-                    name="email"
-                    placeholder="邮箱"
-                    v-model="email"
-                    autocomplete="off"
-                ></el-input>
+                <el-input type="text" name="email" placeholder="邮箱" v-model="email" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-input
-                    type="text"
-                    placeholder="原密码"
-                    v-model="oldPassword"
-                    autocomplete="off"
-                ></el-input>
+                <el-input type="text" placeholder="原密码" v-model="oldPassword" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-input
-                    type="text"
-                    placeholder="新密码"
-                    v-model="newPassword"
-                    autocomplete="off"
-                ></el-input>
+                <el-input type="text" placeholder="新密码" v-model="newPassword" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-input
-                    type="text"
-                    placeholder="确认密码"
-                    v-model="checkPassword"
-                    autocomplete="off"
-                ></el-input>
+                <el-input type="text" placeholder="确认密码" v-model="checkPassword" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="doUpdate" style="width: 100%">确认更改</el-button>
