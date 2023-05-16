@@ -60,7 +60,7 @@ export default {
         currentPathName () {
             // console.log(this.$store.state.currentPathName)
             return this.$store.state.currentPathName; //计算需要监听的数据
-        }
+        },
     },
 }
 </script>

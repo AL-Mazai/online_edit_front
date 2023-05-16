@@ -164,16 +164,14 @@ export default {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
                 }
+            }).then(response => {
+                // console.log(response.data)//测试
+                this.docTableData = response.data.userList
+                this.total = response.data.total
+            }).catch(error => {
+                // console.log(error)
+                this.$message.error(error.data)
             })
-                .then(response => {
-                    // console.log(response.data)//测试
-                    this.docTableData = response.data.userList
-                    this.total = response.data.total
-                })
-                .catch(error => {
-                    // console.log(error)
-                    this.$message.info(error.data)
-                })
         },
         //是否启用文档
         changeStatus(row) {

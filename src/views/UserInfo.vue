@@ -1,30 +1,21 @@
 <!--个人信息-->
 <template>
-    <div class="avatar" style="text-align: center">
-        <div>
-            <el-avatar :size="100"  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-        </div>
-        <el-descriptions class="Info" title="   " :column="1"  border>
-            <el-descriptions-item>
-                <template slot="label">
-                    <i class="el-icon-user" ></i>用户ID
-                </template>
-                {{user.userId}}
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template slot="label">
-                    <i class="el-icon-monitor"></i>用户名
-                </template>
-                {{user.userName }}
-            </el-descriptions-item>
-            <el-descriptions-item>
-                <template slot="label">
-                    <i class="el-icon-message"></i>邮箱
-                </template>
-                {{user.email}}
-            </el-descriptions-item>
-        </el-descriptions>
-        <el-button type="warning" style="margin-top: 1vw">修改</el-button>
+    <div class="container">
+        <el-card style="width: 500px; text-align: center">
+            <img src="../assets/logo.png" class="image">
+            <el-form label-width="80px" size="small">
+                <el-form-item label="用户Id">
+                    <el-input v-model="userId" disabled autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="用户名">
+                    <el-input v-model="userForm.userName" autocomplete="off" suffix-icon="el-icon-edit"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱">
+                    <el-input v-model="userForm.email" autocomplete="off" suffix-icon="el-icon-edit"></el-input>
+                </el-form-item>
+                <el-button type="warning" @click="updateUserInfo">保存更改</el-button>
+            </el-form>
+        </el-card>
     </div>
 
 </template>
@@ -33,38 +24,57 @@
 <script>
 
 export default {
-
     // eslint-disable-next-line vue/multi-word-component-names
-
-    data(){
-        return{
-            user: {
-                userId: '1',
-                userName: 'zzw',
-                email: '123@qq.com',
+    name: 'UserInfo',
+    data() {
+        return {
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userForm: {
+                userName: '',
+                email: '',
             },
         }
     },
-    methods:{
-        reset(){
-            this.userName = '';
-            this.userId='';
-            this.email=''
+    created() {
+        this.getUserInfo()
+    },
+    methods: {
+        //获取用户信息
+        getUserInfo() {
+            this.axios.get('http://localhost:8088/user/getUserInfo', {
+                params: {
+                    userId: this.userId,
+                }
+            }).then(response => {
+                this.userForm = response.data
+            }).catch(error => {
+                this.$message.error(error.data)
+            })
         },
-        // async submit(){
-        //     var name = sessionStorage.getItem("userName");
-        //     const {data:res} = await this.$http.post(`select/${name}`)
-        //     this.userList=res.data
-        // },
+        //保存信息
+        updateUserInfo() {
+            let newUser = {
+                userId:this.userId,
+                userName:this.userForm.userName,
+                email:this.userForm.email,
+            }
+            this.axios.post("http://localhost:8088/user/changeInfo", newUser).then(res => {
+                this.$message.success(res.data)
+                this.getUserInfo()
+            }).catch(error => {
+                this.$message.error(error.response.data)
+            })
+        },
     }
 }
 
 </script>
 
-<style>
-.Info{
-    width: 50%;
-    text-align: center;
-    margin: auto;
+<style scoped>
+.container {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
 }
+
 </style>
