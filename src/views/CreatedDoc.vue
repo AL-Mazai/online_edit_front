@@ -3,7 +3,7 @@
     <div>
         <!--文档列表-->
         <div>
-            <el-table :data="showTableData" stripe style="width: 100%">
+            <el-table :data="docTableData" stripe style="width: 100%">
                 <el-table-column prop="docId" label="序号" width="100"></el-table-column>
                 <el-table-column prop="docName" label="文件名" width="120"></el-table-column>
                 <el-table-column prop="type" label="类型" width="120"></el-table-column>
@@ -44,7 +44,7 @@
                 layout="total, sizes, prev, pager, next, jumper"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="pageIndex"
+                :current-page="pageNum"
                 :page-size="pageSize"
                 :page-sizes="[5, 10, 20, 50]"
                 :total="total"
@@ -79,7 +79,34 @@
         </div>
         <!--邀请对话框-->
         <div>
-
+            <el-dialog title="邀请成员" :visible.sync="inviteUserDialog">
+                <el-form :model="inviteUserForm">
+                    <el-form-item label="邀请记录编号" :label-width="formWidth">
+                        <el-input v-model="inviteUserForm.accessId" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="文档id" :label-width="formWidth">
+                        <el-input v-model="inviteUserForm.docId" auto-complete="off" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item label="用户id" :label-width="formWidth">
+                        <el-input v-model="inviteUserForm.userId" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="授权" :label-width="formWidth">
+                        <el-select v-model="inviteUserForm.accessLevel" placeholder="请选择">
+                            <el-option
+                                v-for="item in accessLevelOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <!--                        <el-input v-model="inviteUserForm.accessLevel" auto-complete="off"></el-input>-->
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="inviteUserDialog = false">取 消</el-button>
+                    <el-button type="primary" @click="submitInvite()">确 定</el-button>
+                </div>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -90,41 +117,58 @@ export default {
     data() {
         return {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
-            docId: 0,
-            docTableData: [],
-            userOfDocTableData: [],
+            docId: 0,//文档id，刷新参与成员列表时使用
+            docTableData: [],//当前用户创建的所有文档
+            userOfDocTableData: [],//某个文档的所有参与者
+            /**************邀请成员**********************/
+            inviteUserForm: {
+                accessId: '',
+                docId: '',
+                userId: '',
+                accessLevel: '',
+            },//邀请成员表单
+            accessLevelOptions: [
+                {
+                    value: 1,
+                    label: '管理员权限'
+                },
+                {
+                    value: 2,
+                    label: '可读可写'
+                },
+                {
+                    value: 3,
+                    label: '只读'
+                },
+            ],//权限选择
+            formWidth: '8vw',
+            /**************邀请成员**********************/
+            /***对话框***/
             userOfDocDialog: false,
+            inviteUserDialog: false,
             /***分页变量****/
-            pageIndex: 1, // 第几页
-            pageSize: 5, // 每页几条数据
-            total: 0, // 总条目数
-            showTableData: [], // 当前展示的数据
+            pageNum: 1,
+            pageSize: 5,
+            total: 0
         }
     },
     created() {
-        this.loadDoc()
-    },
-    mounted() {
-        //在组件被挂载到DOM后执行,在这里中,使用setTimeout()函数来延迟0.5秒执行代码块内的逻辑
-        setTimeout(() => {
-            // 获取总条目数
-            this.total = this.docTableData.length;
-            // 根据当前是第几页、每页展示几条，去截取需要展示的数据
-            this.getShowTableData();
-            // console.log(this.showTableData)
-        }, 500);
+        this.getAllDocByUserCreate()
     },
     methods: {
         //初始化，获取所有文档
-        loadDoc() {
-            this.axios.get('http://localhost:8088/user/getAllDocCreate', {
+        getAllDocByUserCreate() {
+            this.axios.get('http://localhost:8088/user/selectFilePageCreateByUser', {
                 params: {
-                    userId: this.userId
+                    userId: this.userId,
+                    pageNum: this.pageNum,
+                    pageSize: this.pageSize,
                 }
             })
                 .then(response => {
                     // console.log(response.data)//测试
-                    this.docTableData = response.data
+                    this.docTableData = response.data.userList
+                    this.total = response.data.total
                 })
                 .catch(error => {
                     // console.log(error)
@@ -139,36 +183,23 @@ export default {
                 docId: row.docId,
                 status: row.enable
             }).then(res => {
-                if (res.status === 200) {
-                    this.$message.success(res.data)
-                }
+                this.$message.success(res.data)
             }).catch(error => {
                 this.$message.error(error.response.data)
             })
         },
         /********************分页*******************/
-        //获取当前页数据
-        getShowTableData() {
-            // 获取截取开始索引
-            let begin = (this.pageIndex - 1) * this.pageSize;
-            // 获取截取结束索引
-            let end = this.pageIndex * this.pageSize;
-            // 通过索引去截取当前页要展示的数据
-            this.showTableData = this.docTableData.slice(begin, end);
-            // console.log(this.showTableData)
-        },
-        // 当前页数改变，重新截取
-        handleCurrentChange(currentPage) {
-            // console.log(currentPage)
-            this.pageIndex = currentPage;
-            this.getShowTableData();
-        },
-        // 每个页面条目数改变，重新截取
+        //数据量改变
         handleSizeChange(pageSize) {
             // console.log(pageSize)
-            this.pageIndex = 1;
-            this.pageSize = pageSize;
-            this.getShowTableData();
+            this.pageSize = pageSize
+            this.getAllDocByUserCreate()
+        },
+        //页数改变
+        handleCurrentChange(pageNum) {
+            // console.log(pageNum)
+            this.pageNum = pageNum
+            this.getAllDocByUserCreate()
         },
         /********************分页*******************/
         //编辑文档
@@ -213,10 +244,26 @@ export default {
                     this.$message.error(error.response.data)
                 })
         },
-        //邀请成员参与文档编辑
+        /**************邀请成员参与文档编辑***************/
         invite() {
-
+            this.inviteUserDialog = true
+            this.inviteUserForm.docId = this.docId
+            this.inviteUserForm.accessId = Math.floor(Math.random() * (100000)) + 100
         },
+        submitInvite() {
+            this.axios.post("http://localhost:8088/access/inviteUserOfDoc", this.inviteUserForm).then((res) => {
+                //刷新参与成员列表
+                this.getUserOfDoc(this.docId)
+                this.$message.success(res.data)
+            }).catch((err) => {
+                this.$message.error(err.response.data)
+            });
+            //清空对话框
+            this.inviteUserForm = {}
+            //关闭对话框
+            this.inviteUserDialog = false
+        },
+        /**************邀请成员参与文档编辑***************/
         //删除文档
         deleteDoc(row) {
             this.axios.delete('http://localhost:8088/doc/deleteDocument', {
@@ -228,7 +275,7 @@ export default {
                     // console.log(response.data)
                     this.$message.success(response.data)
                     //重新获取
-                    this.loadDoc()
+                    this.getAllDocByUserCreate()
                     //更新页面
                     // location.reload()
                 })

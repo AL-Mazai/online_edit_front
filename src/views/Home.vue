@@ -2,7 +2,7 @@
 <template>
     <div>
         <!--功能栏-->
-        <div >
+        <div>
             <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search"
                       v-model="fileName"></el-input>
             <el-button type="primary" style="margin-left: 5px;" @click="searchByName">搜索 <i
@@ -52,7 +52,15 @@
                         <el-input v-model="createDocForm.docContent" auto-complete="off"></el-input>
                     </el-form-item>
                     <el-form-item label="类型" :label-width="formWidth">
-                        <el-input v-model="createDocForm.type" auto-complete="off"></el-input>
+                        <el-select v-model="createDocForm.type" placeholder="请选择">
+                            <el-option
+                                v-for="item in DocTypeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+<!--                        <el-input v-model="createDocForm.type" auto-complete="off"></el-input>-->
                     </el-form-item>
                     <el-form-item label="创建时间" :label-width="formWidth">
                         <el-date-picker v-model="createDocForm.createdTime" type="date"
@@ -78,12 +86,11 @@ export default {
     name: "Home",
     data() {
         return {
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             fileName: '',
-            type:'',
-            // currentTab: 'first',
-            //新建文档对话框
-            createDocDialog: false,
-            //新建文档
+            type: '',
+            /****************新建文档**************************/
+            createDocDialog: false,//新建文档对话框
             createDocForm: {
                 docId: '',
                 docName: '',
@@ -91,9 +98,28 @@ export default {
                 type: '',
                 createdTime: '',
                 status: '',
-            },
-            allDocTableData: [],//所有数据
-            formWidth: '6vw',
+            },//新建文档
+            DocTypeOptions:[
+                {
+                    value: 'docx',
+                    label: 'Word'
+                },
+                {
+                    value: 'pptx',
+                    label: 'PPT'
+                },
+                {
+                    value: 'xlsx',
+                    label: 'Excel'
+                },
+                {
+                    value: 'txt',
+                    label: '普通文本'
+                }
+            ],//文档类型
+            formWidth: '6vw',//表单宽度
+            /****************新建文档**************************/
+            allDocTableData: [],//所有文档
             /***分页变量****/
             pageNum: 1,
             pageSize: 5,
@@ -113,7 +139,7 @@ export default {
             if (this.fileName !== '' || this.type !== '') {
                 this.pageNum = 1;
             }
-            this.axios.get('http://localhost:8088/doc/selectFileByPage',{
+            this.axios.get('http://localhost:8088/doc/selectFileByPage', {
                 params: {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
@@ -154,12 +180,24 @@ export default {
         },
         //提交新建的文档给后端
         submitDoc() {
-            console.log(this.createDocForm)//测试
-            this.axios.post("http://localhost:8088/doc/insertDocument", this.createDocForm)
-                .then((res) => {
-                    this.$message.success(res.data)
+            //设置一个access变量存放创建记录
+            let newAccess = {
+                accessId: Math.floor(Math.random() * (100000)) + 100,
+                docId: this.createDocForm.docId,
+                userId: this.userId,
+                accessLevel: 1,
+            }
+            this.axios.post("http://localhost:8088/doc/insertDocument", this.createDocForm).then((res) => {
+                this.$message.success(res.data)
+                //用户创建好文档后将记录同步到access表中
+                console.log(newAccess)
+                this.axios.post("http://localhost:8088/access/inviteUserOfDoc", newAccess).then((res) => {
+                    console.log(res)
+                    this.$message.success("同步成功")
                 }).catch((err) => {
-                // console.log(err);//控制台测试代码
+                    this.$message.error(err.response.data)
+                });
+            }).catch((err) => {
                 this.$message.error(err.response.data)
             });
             //清空对话框
@@ -177,14 +215,11 @@ export default {
                 }
             })
                 .then(response => {
-                    // console.log(response.data)//测试
                     this.allDocTableData = response.data
                 })
                 .catch(error => {
-                    // console.log(error.response.data)
                     this.$message.error(error.response.data)
                 })
-            console.log('@' + this.allDocTableData.length)
         },
         //刷新页面
         refresh() {
