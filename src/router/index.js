@@ -31,6 +31,11 @@ const routes = [
         name: "register",
         component: () => import("../views/Register"),
     },
+    {
+        path: "/onlyOffice",
+        name: "onlyOffice",
+        component: () => import("../views/only-office/test")
+    }
 ];
 
 const router = new VueRouter({
