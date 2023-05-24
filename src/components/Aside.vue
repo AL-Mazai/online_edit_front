@@ -18,7 +18,7 @@
         alt=""
         style="width: 20px; position: relative; top: 5px; right: 5px"
       />
-      <b style="color: white">在线文档编辑平台</b>
+      <b style="color: white" v-show="logoTextShow">在线文档编辑平台</b>
     </div>
 
     <!--主页-->
