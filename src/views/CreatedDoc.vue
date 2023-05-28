@@ -129,10 +129,6 @@ export default {
             },//邀请成员表单
             accessLevelOptions: [
                 {
-                    value: 1,
-                    label: '管理员权限'
-                },
-                {
                     value: 2,
                     label: '可读可写'
                 },
@@ -166,10 +162,10 @@ export default {
                 }
             }).then(response => {
                 // console.log(response.data)//测试
-                this.docTableData = response.data.userList
+                this.docTableData = response.data.docList
                 this.total = response.data.total
             }).catch(error => {
-                // console.log(error)
+                console.log(error)
                 this.$message.error(error.data)
             })
         },
@@ -186,6 +182,7 @@ export default {
                 this.$message.error(error.response.data)
             })
         },
+
         /********************分页*******************/
         //数据量改变
         handleSizeChange(pageSize) {
@@ -200,9 +197,12 @@ export default {
             this.getAllDocByUserCreate()
         },
         /********************分页*******************/
-        //编辑文档
-        handleEdit() {
 
+        //编辑文档
+        handleEdit(row) {
+            let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
+            window.open(url, '_blank');
+            console.log(row)
         },
         //获取文档的所有参与者
         getUserOfDoc(docId) {
@@ -242,6 +242,7 @@ export default {
                     this.$message.error(error.response.data)
                 })
         },
+
         /**************邀请成员参与文档编辑***************/
         invite() {
             this.inviteUserDialog = true
@@ -249,30 +250,49 @@ export default {
             this.inviteUserForm.accessId = Math.floor(Math.random() * (100000)) + 100
         },
         submitInvite() {
-            this.axios.post("http://localhost:8088/access/inviteUserOfDoc", this.inviteUserForm).then((res) => {
-                //刷新参与成员列表
-                this.getUserOfDoc(this.docId)
-                this.$message.success(res.data)
-            }).catch((err) => {
-                this.$message.error(err.response.data)
-            });
-            //清空对话框
-            this.inviteUserForm = {}
-            //关闭对话框
-            this.inviteUserDialog = false
+            if (this.inviteUserForm.userId != this.userId) {
+                this.axios.post("http://localhost:8088/access/inviteUserOfDoc", this.inviteUserForm).then((res) => {
+                    //刷新参与成员列表
+                    this.getUserOfDoc(this.docId)
+                    this.$message.success(res.data)
+                }).catch((err) => {
+                    console.log(err.response.data)
+                    this.$message.error("邀请失败，用户不存在")
+                });
+                //清空对话框
+                this.inviteUserForm = {}
+                //关闭对话框
+                this.inviteUserDialog = false
+            } else {
+                this.$message.warning("不能邀请自己！")
+            }
+
         },
         /**************邀请成员参与文档编辑***************/
+
         //删除文档
         deleteDoc(row) {
+            let newDeleteRecord = {
+                deleteId: Math.floor(Math.random() * (100000)) + 100,
+                userId: this.userId,
+                docId: row.docId
+            }
             this.axios.delete('http://localhost:8088/doc/deleteDocument', {
                 params: {
                     docId: row.docId
                 }
             })
                 .then(response => {
+                    //将删除的文档添加到回收站
+                    this.axios.post("http://localhost:8088/deleteRecord/addDeleteRecord", newDeleteRecord).then((res) => {
+                        console.log(res)
+                    }).catch((err) => {
+                        this.$message.error(err.response.data)
+                    });
+
                     // console.log(response.data)
                     this.$message.success(response.data)
-                    //重新获取
+                    //重新获取文档列表
                     this.getAllDocByUserCreate()
                     //更新页面
                     // location.reload()

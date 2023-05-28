@@ -9,7 +9,17 @@
             <el-table-column label="操作">
                 <template v-slot:default="scope">
                     <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                    <el-button type="danger" icon="el-icon-remove-outline" @click="handleEdit(scope.row)">退出</el-button>
+                    <!--删除提示框-->
+                    <el-popconfirm
+                        confirm-button-text='残忍离去！'
+                        cancel-button-text='点错了~'
+                        icon="el-icon-info"
+                        icon-color="red"
+                        title="确定退出吗？"
+                        @confirm="quitDoc(scope.row)"
+                    >
+                        <el-button type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">退出</el-button>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -75,6 +85,23 @@ export default {
         //编辑
         handleEdit() {
 
+        },
+        //退出
+        quitDoc(row){
+            this.axios.delete('http://localhost:8088/access/quitDoc', {
+                params: {
+                    userId: this.userId,
+                    docId: row.docId
+                }
+            })
+                .then(response => {
+                    // console.log(response.data)
+                    this.$message.success(response.data)
+                })
+                .catch(error => {
+                    console.log(error.response.data)
+                    this.$message.error("退出失败！")
+                })
         },
         /********************分页*******************/
         //获取当前页数据

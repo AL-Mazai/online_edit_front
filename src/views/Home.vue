@@ -48,9 +48,6 @@
                     <el-form-item label="名称" :label-width="formWidth">
                         <el-input v-model="createDocForm.docName" auto-complete="off"></el-input>
                     </el-form-item>
-                    <el-form-item label="内容" :label-width="formWidth">
-                        <el-input v-model="createDocForm.docContent" auto-complete="off"></el-input>
-                    </el-form-item>
                     <el-form-item label="类型" :label-width="formWidth">
                         <el-select v-model="createDocForm.type" placeholder="请选择">
                             <el-option
@@ -73,7 +70,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="createDocDialog = false">取 消</el-button>
-                    <el-button type="primary" @click="submitDoc()">确 定</el-button>
+                    <el-button type="primary" @click="submitDoc(createDocForm)">确 定</el-button>
                 </div>
             </el-dialog>
         </div>
@@ -89,15 +86,16 @@ export default {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             fileName: '',
             type: '',
+
             /****************新建文档**************************/
             createDocDialog: false,//新建文档对话框
             createDocForm: {
-                docId: '',
+                docId: Math.floor(Math.random() * (100000)) + 100,
                 docName: '',
-                docContent: '',
                 type: '',
                 createdTime: '',
                 status: '',
+                isDelete: 1,
             },//新建文档
             DocTypeOptions:[
                 {
@@ -112,14 +110,11 @@ export default {
                     value: 'xlsx',
                     label: 'Excel'
                 },
-                {
-                    value: 'txt',
-                    label: '普通文本'
-                }
             ],//文档类型
             formWidth: '6vw',//表单宽度
-            /****************新建文档**************************/
+
             allDocTableData: [],//所有文档
+
             /***分页变量****/
             pageNum: 1,
             pageSize: 5,
@@ -179,7 +174,8 @@ export default {
             this.createDocDialog = true
         },
         //提交新建的文档给后端
-        submitDoc() {
+        submitDoc(doc) {
+            console.log(this.createDocForm)
             //设置一个access变量存放创建记录
             let newAccess = {
                 accessId: Math.floor(Math.random() * (100000)) + 100,
@@ -200,10 +196,16 @@ export default {
             }).catch((err) => {
                 this.$message.error(err.response.data)
             });
+
             //清空对话框
             this.createDocForm = {}
             //关闭对话框
             this.createDocDialog = false
+
+            //跳转到新建的文档
+            // let userId = (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId
+            // let url = "http://192.168.43.202:4000/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + userId
+            // window.open(url, '_blank');
         },
         //根据关键字搜索文档
         searchByName() {
