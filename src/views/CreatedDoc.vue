@@ -1,9 +1,20 @@
 <!--我创建的文档-->
 <template>
     <div>
+        <!--功能栏-->
+        <div>
+            <document-toolbar @search="docTableCreateByUser = $event"
+                              @search-total="total = $event"
+                              :access-level = 1
+                              :page-num = this.pageNum
+                              :page-size = this.pageSize
+            >
+            </document-toolbar>
+        </div>
+
         <!--文档列表-->
         <div>
-            <el-table :data="docTableData" stripe style="width: 100%">
+            <el-table :data="docTableCreateByUser" stripe style="width: 100%">
                 <el-table-column prop="docId" label="序号" width="100"></el-table-column>
                 <el-table-column prop="docName" label="文件名" width="120"></el-table-column>
                 <el-table-column prop="type" label="类型" width="120"></el-table-column>
@@ -112,14 +123,23 @@
 </template>
 
 <script>
+import DocumentToolbar from "@/components/DocumentToolbar";
+
 export default {
     name: "CreatedDoc",
+    components:{
+        DocumentToolbar
+    },
     data() {
         return {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            fileName: '',
+            type: '',
             docId: 0,//文档id，刷新参与成员列表时使用
-            docTableData: [],//当前用户创建的所有文档
+
+            docTableCreateByUser: [],//当前用户创建的所有文档
             userOfDocTableData: [],//某个文档的所有参与者
+
             /**************邀请成员**********************/
             inviteUserForm: {
                 accessId: '',
@@ -138,10 +158,11 @@ export default {
                 },
             ],//权限选择
             formWidth: '8vw',
-            /**************邀请成员**********************/
+
             /***对话框***/
             userOfDocDialog: false,
             inviteUserDialog: false,
+
             /***分页变量****/
             pageNum: 1,
             pageSize: 5,
@@ -154,15 +175,18 @@ export default {
     methods: {
         //初始化，获取所有文档
         getAllDocByUserCreate() {
-            this.axios.get('http://localhost:8088/user/selectFilePageCreateByUser', {
+            this.axios.get('http://localhost:8088/doc/selectFileByPage', {
                 params: {
-                    userId: this.userId,
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
+                    fileName: this.fileName,
+                    type: this.type,
+                    accessLevel: 1,
+                    userId: this.userId
                 }
             }).then(response => {
                 // console.log(response.data)//测试
-                this.docTableData = response.data.docList
+                this.docTableCreateByUser = response.data.docList
                 this.total = response.data.total
             }).catch(error => {
                 console.log(error)

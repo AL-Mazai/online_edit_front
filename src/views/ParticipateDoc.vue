@@ -1,6 +1,15 @@
 <!--我参与的文档-->
 <template>
     <div>
+        <div>
+            <document-toolbar @search="showTableData = $event"
+                              @search-total="total = $event"
+                              :access-level = 2
+                              :page-num = this.pageIndex
+                              :page-size = this.pageSize
+            >
+            </document-toolbar>
+        </div>
         <el-table :data="showTableData" stripe style="width: 100%">
             <el-table-column prop="docId" label="序号" width="150"></el-table-column>
             <el-table-column prop="docName" label="文件名" width="150"></el-table-column>
@@ -39,8 +48,13 @@
 </template>
 
 <script>
+import DocumentToolbar from "@/components/DocumentToolbar";
+
 export default {
     name: "ParticipateDoc",
+    components:{
+        DocumentToolbar
+    },
     data() {
         return {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
