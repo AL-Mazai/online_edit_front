@@ -304,7 +304,6 @@ export default {
         },
         //设置时间格式
         dateFormat(row, column) {
-            // console.log(row[column.prop])//测试
             let date = row[column.property];
             if (date == undefined) {
                 return "";

@@ -3,15 +3,15 @@
     <div>
         <!--功能栏-->
         <div>
-            <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search"
-                      v-model="fileName"></el-input>
-            <el-button type="primary" style="margin-left: 5px;" @click="searchByName">搜索 <i
-                class="el-icon-search"></i></el-button>
-            <el-button type="primary" style="margin-left: 5px;" @click="refresh">刷新 <i class="el-icon-refresh"></i>
-            </el-button>
-            <el-button type="primary" style="margin-left: 5px;" @click="createDoc">新建 <i class="el-icon-plus"></i>
-            </el-button>
+            <document-toolbar
+                @update-file-name="fileName = $event"
+                :search-by-name="searchByName"
+                :refresh="refresh"
+                :create-doc="createDoc"
+            >
+            </document-toolbar>
         </div>
+
         <!--数据栏-->
         <div>
             <el-table :data="allDocTableData" stripe style="width: 100%">
@@ -78,9 +78,13 @@
 </template>
 
 <script>
+import DocumentToolbar from "@/components/DocumentToolbar";
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: "Home",
+    components:{
+        DocumentToolbar
+    },
     data() {
         return {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
@@ -204,8 +208,8 @@ export default {
 
             //跳转到新建的文档
             // let userId = (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId
-            // let url = "http://192.168.43.202:4000/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + userId
-            // window.open(url, '_blank');
+            let url = "http://192.168.43.202:4000/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + this.userId
+            window.open(url, '_blank');
         },
         //根据关键字搜索文档
         searchByName() {

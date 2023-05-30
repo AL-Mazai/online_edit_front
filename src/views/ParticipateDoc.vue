@@ -83,8 +83,10 @@ export default {
                 })
         },
         //编辑
-        handleEdit() {
-
+        handleEdit(row) {
+            let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
+            window.open(url, '_blank');
+            console.log(row)
         },
         //退出
         quitDoc(row){
@@ -130,7 +132,7 @@ export default {
         /********************分页*******************/
         //设置时间格式
         dateFormat(row, column) {
-            // console.log(row[column.prop])//测试
+            // console.log(row[column.property])//测试
             let date = row[column.property];
             if (date == undefined) {
                 return "";
