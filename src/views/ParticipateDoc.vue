@@ -1,6 +1,7 @@
 <!--我参与的文档-->
 <template>
     <div>
+        <!--功能栏-->
         <div>
             <document-toolbar @search="showTableData = $event"
                               @search-total="total = $event"
@@ -10,6 +11,7 @@
             >
             </document-toolbar>
         </div>
+        <!--文档列表-->
         <el-table :data="showTableData" stripe style="width: 100%">
             <el-table-column prop="docId" label="序号" width="150"></el-table-column>
             <el-table-column prop="docName" label="文件名" width="150"></el-table-column>
@@ -96,12 +98,14 @@ export default {
                     this.$message.info(error.data)
                 })
         },
+
         //编辑
         handleEdit(row) {
             let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
             window.open(url, '_blank');
             console.log(row)
         },
+
         //退出
         quitDoc(row){
             this.axios.delete('http://localhost:8088/access/quitDoc', {
@@ -119,6 +123,7 @@ export default {
                     this.$message.error("退出失败！")
                 })
         },
+
         /********************分页*******************/
         //获取当前页数据
         getShowTableData() {
@@ -143,7 +148,8 @@ export default {
             this.pageSize = pageSize;
             this.getShowTableData();
         },
-        /********************分页*******************/
+
+
         //设置时间格式
         dateFormat(row, column) {
             // console.log(row[column.property])//测试

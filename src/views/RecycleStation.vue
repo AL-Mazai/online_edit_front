@@ -2,6 +2,17 @@
 <template>
     <!--删除的文档列表-->
     <div>
+        <!--功能栏-->
+        <div>
+            <document-toolbar @search="deleteDocRecord = $event"
+                              @search-total="total = $event"
+                              :access-level = 1
+                              :page-num = this.pageNum
+                              :page-size = this.pageSize
+            >
+            </document-toolbar>
+        </div>
+        <!--文档列表-->
         <el-table :data="deleteDocRecord" stripe style="width: 100%">
             <el-table-column prop="docId" label="序号" width="150"></el-table-column>
             <el-table-column prop="docName" label="文件名" width="150"></el-table-column>
@@ -44,12 +55,18 @@
 </template>
 
 <script>
+import DocumentToolbar from "@/components/DocumentToolbar";
+
 export default {
     name: "RecycleStation",
+    components:{
+        DocumentToolbar
+    },
     data() {
         return {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             deleteDocRecord: [],
+
             /***分页变量****/
             pageNum: 1,
             pageSize: 5,

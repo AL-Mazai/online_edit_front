@@ -6,7 +6,7 @@
                       v-model="fileName"></el-input>
             <el-input style="width: 200px; margin-left: 1px" placeholder="请输入类型" suffix-icon="el-icon-search"
                       v-model="type"></el-input>
-            <el-button type="primary" style="margin-left: 5px;" @click="searchByName">搜索 <i
+            <el-button type="primary" style="margin-left: 5px;" @click="searchDoc">搜索 <i
                 class="el-icon-search"></i></el-button>
             <el-button type="primary" style="margin-left: 5px;" @click="refresh">刷新 <i class="el-icon-refresh"></i>
             </el-button>
@@ -61,15 +61,14 @@ export default {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             fileName: '',
             type:'',
-
             /****************新建文档**************************/
             createDocDialog: false,//新建文档对话框
             createDocForm: {
                 docId: Math.floor(Math.random() * (100000)) + 100,
                 docName: '',
-                type: '',
-                createdTime: '',
-                status: '',
+                type: 'docx',
+                createdTime:  new Date().toISOString().slice(0,10),
+                status: 'true',
                 isDelete: 1,
             },//新建文档
             DocTypeOptions:[
@@ -86,7 +85,7 @@ export default {
                     label: 'Excel'
                 },
             ],//文档类型
-            formWidth: '6vw',//表单宽度
+            formWidth: '8vw',//表单宽度
         }
     },
     props:{
@@ -101,42 +100,45 @@ export default {
         },
         //提交新建的文档给后端
         submitDoc(doc) {
-            console.log(this.createDocForm)
-            //设置一个access变量存放创建记录
-            let newAccess = {
-                accessId: Math.floor(Math.random() * (100000)) + 100,
-                docId: this.createDocForm.docId,
-                userId: this.userId,
-                accessLevel: 1,
-            }
-            console.log(newAccess)
-            this.axios.post("http://localhost:8088/doc/insertDocument", this.createDocForm).then((res) => {
-                this.$message.success(res.data)
-                //用户创建好文档后将记录同步到access表中
-                // console.log(newAccess)
-                this.axios.post("http://localhost:8088/access/inviteUserOfDoc", newAccess).then((res) => {
-                    console.log(res)
-                    this.$message.success("同步成功")
+            if(this.createDocForm.docName != ''){
+                console.log(this.createDocForm)
+                //设置一个access变量存放创建记录
+                let newAccess = {
+                    accessId: Math.floor(Math.random() * (100000)) + 100,
+                    docId: this.createDocForm.docId,
+                    userId: this.userId,
+                    accessLevel: 1,
+                }
+                console.log(newAccess)
+                this.axios.post("http://localhost:8088/doc/insertDocument", this.createDocForm).then((res) => {
+                    this.$message.success(res.data)
+                    //用户创建好文档后将记录同步到access表中
+                    this.axios.post("http://localhost:8088/access/inviteUserOfDoc", newAccess).then(() => {
+                        this.$message.success("同步成功")
+                    }).catch((err) => {
+                        this.$message.error(err.response.data)
+                    });
                 }).catch((err) => {
                     this.$message.error(err.response.data)
                 });
-            }).catch((err) => {
-                this.$message.error(err.response.data)
-            });
 
-            //清空对话框
-            this.createDocForm = {}
-            //关闭对话框
-            this.createDocDialog = false
+                //清空对话框
+                this.createDocForm = {}
+                //关闭对话框
+                this.createDocDialog = false
 
-            //跳转到新建的文档
-            // let userId = (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId
-            let url = "http://192.168.43.202:4000/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + this.userId
-            window.open(url, '_blank');
+                //跳转到新建的文档
+                // let userId = (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId
+                let url = "http://192.168.43.202:4000/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + this.userId
+                window.open(url, '_blank');
+            }else {
+                this.$message.warning("文档名不能为空！")
+            }
+
         },
 
         //根据关键字搜索文档
-        searchByName() {
+        searchDoc() {
             this.axios.get('http://localhost:8088/doc/selectFileByPage', {
                 //参数
                 params: {
@@ -160,6 +162,7 @@ export default {
                     this.$message.error("错误")
                 })
         },
+
         //刷新页面
         refresh() {
             location.reload()

@@ -62,6 +62,7 @@
             >
             </el-pagination>
         </div>
+
         <!--查看文档参与者对话框-->
         <div>
             <el-dialog title="参与成员" :visible.sync="userOfDocDialog">
@@ -88,6 +89,7 @@
                 </el-table>
             </el-dialog>
         </div>
+
         <!--邀请对话框-->
         <div>
             <el-dialog title="邀请成员" :visible.sync="inviteUserDialog">
@@ -133,9 +135,9 @@ export default {
     data() {
         return {
             userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            docId: 0, //文档id，刷新参与成员列表时使用
             fileName: '',
             type: '',
-            docId: 0,//文档id，刷新参与成员列表时使用
 
             docTableCreateByUser: [],//当前用户创建的所有文档
             userOfDocTableData: [],//某个文档的所有参与者
@@ -193,6 +195,7 @@ export default {
                 this.$message.error(error.data)
             })
         },
+
         //是否启用文档
         changeStatus(row) {
             // console.log(row.status)
@@ -220,7 +223,6 @@ export default {
             this.pageNum = pageNum
             this.getAllDocByUserCreate()
         },
-        /********************分页*******************/
 
         //编辑文档
         handleEdit(row) {
@@ -228,6 +230,7 @@ export default {
             window.open(url, '_blank');
             console.log(row)
         },
+
         //获取文档的所有参与者
         getUserOfDoc(docId) {
             this.docId = docId //获取文档的id
@@ -247,6 +250,7 @@ export default {
                     this.$message.info(error.data)
                 })
         },
+
         //踢除文档的某个参与者
         deleteUserOfDoc(userId) {
             this.axios.delete('http://localhost:8088/access/deleteUserOfDoc', {
@@ -268,11 +272,13 @@ export default {
         },
 
         /**************邀请成员参与文档编辑***************/
+        //成员信息
         invite() {
             this.inviteUserDialog = true
             this.inviteUserForm.docId = this.docId
             this.inviteUserForm.accessId = Math.floor(Math.random() * (100000)) + 100
         },
+        //提交邀请
         submitInvite() {
             if (this.inviteUserForm.userId != this.userId) {
                 this.axios.post("http://localhost:8088/access/inviteUserOfDoc", this.inviteUserForm).then((res) => {
@@ -292,7 +298,7 @@ export default {
             }
 
         },
-        /**************邀请成员参与文档编辑***************/
+
 
         //删除文档
         deleteDoc(row) {
@@ -326,6 +332,7 @@ export default {
                     this.$message.error(error.response.data)
                 })
         },
+
         //设置时间格式
         dateFormat(row, column) {
             let date = row[column.property];
