@@ -1,6 +1,6 @@
 <template>
-    <div class="login-wrap">
-        <el-form class="login-container">
+    <div class="register-wrap">
+        <el-form class="register-container">
             <h1 class="title">用户注册</h1>
             <el-form-item>
                 <el-input
@@ -8,6 +8,8 @@
                     placeholder="用户id"
                     v-model="user.userId"
                     autocomplete="off"
+                    prefix-icon="el-icon-key"
+                    disabled
                 ></el-input>
             </el-form-item>
             <el-form-item>
@@ -16,6 +18,7 @@
                     placeholder="用户名"
                     v-model="user.userName"
                     autocomplete="off"
+                    prefix-icon="el-icon-user"
                 ></el-input>
             </el-form-item>
             <el-form-item>
@@ -24,6 +27,7 @@
                     placeholder="注册邮箱"
                     v-model="user.email"
                     autocomplete="off"
+                    prefix-icon="el-icon-phone"
                 ></el-input>
             </el-form-item>
             <el-form-item>
@@ -32,6 +36,18 @@
                     placeholder="注册密码"
                     v-model="user.password"
                     autocomplete="off"
+                    prefix-icon="el-icon-lock"
+                    show-password
+                ></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-input
+                    type="password"
+                    placeholder="确认密码"
+                    v-model="checkPassword"
+                    autocomplete="off"
+                    prefix-icon="el-icon-lock"
+                    show-password
                 ></el-input>
             </el-form-item>
             <el-form-item>
@@ -52,54 +68,61 @@ export default {
     data() {
         return {
             user: {
-                userId: "",
+                userId: Math.floor(Math.random() * (100000)) + 100,
                 userName: "",
                 email: "",
                 password: "",
             },
+            checkPassword: '',
         };
     },
     methods: {
         //注册
         doRegister() {
-            let url = "http://localhost:8088/user/register";
-            this.axios.post(url, this.user).then((res) => {
-                this.$message.success(res.data)
-                this.$router.push("/login"); //注册成功跳转到登录页面
-            }).catch((err) => {
-                console.log(err);//控制台测试代码
-                this.$message.error(err.response.data)
-            });
+            if(this.checkPassword === this.user.password){
+                let url = "http://localhost:8088/user/register";
+                this.axios.post(url, this.user).then((res) => {
+                    this.$message.success(res.data)
+                    this.$router.push("/login"); //注册成功跳转到登录页面
+                }).catch((err) => {
+                    console.log(err);//控制台测试代码
+                    this.$message.error(err.response.data)
+                });
+            }else {
+                this.$message.warning("两次密码不一致！")
+            }
         },
     },
 };
 </script>
 
 <style scoped>
-.login-wrap {
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    padding-top: 10%;
-    background-repeat: no-repeat;
-    background-position: center right;
-    background-size: 100%;
+.register-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+    background-color: #fff;
 }
 
-.login-container {
-    border-radius: 10px;
-    margin: 0px auto;
+.register-container {
     width: 350px;
     padding: 30px 35px 15px 35px;
-    background: #fff;
-    border: 1px solid #eaeaea;
-    text-align: left;
-    box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
 .title {
-    margin: 0px auto 40px auto;
     text-align: center;
-    color: #505458;
+    margin-bottom: 20px;
+}
+
+.el-input__inner {
+    border-radius: 6px;
+}
+
+.el-button {
+    border-radius: 6px;
 }
 </style>
