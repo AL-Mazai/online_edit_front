@@ -1,6 +1,6 @@
 <!--顶部组件-->
 <template>
-    <div style="line-height: 60px; display: flex">
+    <div style="line-height: 50px; display: flex;">
         <div style="flex: 1;">
             <span :class="collapseBtnClass" style="cursor: pointer; font-size: 18px" @click="collapse"></span>
             <el-breadcrumb separator="/" style="display: inline-block; margin-left: 10px">

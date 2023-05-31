@@ -28,7 +28,7 @@ export default {
     name: 'UserInfo',
     data() {
         return {
-            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userId: this.$userId,
             userForm: {
                 userName: '',
                 email: '',

@@ -31,8 +31,7 @@
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
                         <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                        <el-button type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员
-                        </el-button>
+                        <el-button type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
                         <!--删除提示框-->
                         <el-popconfirm
                             confirm-button-text='确定'
@@ -134,7 +133,7 @@ export default {
     },
     data() {
         return {
-            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userId: this.$userId,
             docId: 0, //文档id，刷新参与成员列表时使用
             fileName: '',
             type: '',

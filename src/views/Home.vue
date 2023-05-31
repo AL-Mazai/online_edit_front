@@ -44,7 +44,7 @@ export default {
     },
     data() {
         return {
-            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userId: this.$userId,
             fileName: '',
             type: '',
 

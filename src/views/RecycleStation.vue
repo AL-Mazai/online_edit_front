@@ -2,16 +2,6 @@
 <template>
     <!--删除的文档列表-->
     <div>
-        <!--功能栏-->
-        <div>
-            <document-toolbar @search="deleteDocRecord = $event"
-                              @search-total="total = $event"
-                              :access-level = 1
-                              :page-num = this.pageNum
-                              :page-size = this.pageSize
-            >
-            </document-toolbar>
-        </div>
         <!--文档列表-->
         <el-table :data="deleteDocRecord" stripe style="width: 100%">
             <el-table-column prop="docId" label="序号" width="150"></el-table-column>
@@ -64,7 +54,7 @@ export default {
     },
     data() {
         return {
-            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userId: this.$userId,
             deleteDocRecord: [],
 
             /***分页变量****/

@@ -59,7 +59,7 @@ export default {
     },
     data() {
         return {
-            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userId: this.$userId,
             allDocParTableData: [],
             /***分页变量****/
             pageIndex: 1, // 第几页
@@ -101,9 +101,14 @@ export default {
 
         //编辑
         handleEdit(row) {
-            let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
-            window.open(url, '_blank');
-            console.log(row)
+            if(row.status == true){
+                let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
+                window.open(url, '_blank');
+                console.log(row)
+            }else {
+                this.$message.warning("无法编辑文档，请联系创建者！")
+            }
+
         },
 
         //退出

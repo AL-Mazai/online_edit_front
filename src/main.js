@@ -18,6 +18,9 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 Vue.use(ElementUI);
 
+//配置全局变量用户Id
+Vue.prototype.$userId = (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+
 Vue.config.productionTip = false;
 
 new Vue({

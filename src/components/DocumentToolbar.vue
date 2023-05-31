@@ -58,7 +58,7 @@ export default {
     name: "DocumentToolbar",
     data() {
         return {
-            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
+            userId: this.$userId,
             fileName: '',
             type:'',
             /****************新建文档**************************/
