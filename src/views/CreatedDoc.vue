@@ -30,8 +30,8 @@
                 <!--操作-->
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
-                        <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
-                        <el-button type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
+                        <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)" style="font-size: smaller;">编辑/预览</el-button>
+                        <el-button size="mini" type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)" style="font-size: smaller;">查看成员</el-button>
                         <!--删除提示框-->
                         <el-popconfirm
                             confirm-button-text='确定'
@@ -41,7 +41,7 @@
                             title="您确定删除吗？"
                             @confirm="deleteDoc(scope.row)"
                         >
-                            <el-button type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">
+                            <el-button size="mini" type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw;font-size: smaller;">
                                 删除
                             </el-button>
                         </el-popconfirm>
@@ -225,7 +225,8 @@ export default {
 
         //编辑文档
         handleEdit(row) {
-            let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
+            let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
+            // let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId + "&type=desktop&action=view";
             window.open(url, '_blank');
             console.log(row)
         },

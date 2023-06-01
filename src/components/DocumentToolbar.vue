@@ -129,7 +129,7 @@ export default {
 
                 //跳转到新建的文档
                 // let userId = (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId
-                let url = "http://192.168.43.202:4000/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + this.userId
+                let url = "http://43.138.121.194:4001/create?fileExt=" + doc.type + "&fileName=" + doc.docName + "&sample=false"+"&uid=" + this.userId
                 window.open(url, '_blank');
             }else {
                 this.$message.warning("文档名不能为空！")
