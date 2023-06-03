@@ -11,6 +11,7 @@
             >
             </document-toolbar>
         </div>
+
         <!--文档列表-->
         <el-table :data="showTableData" stripe style="width: 100%">
             <el-table-column prop="docId" label="序号" width="150"></el-table-column>
@@ -19,7 +20,7 @@
             <el-table-column prop="createdTime" label="创建时间" :formatter="dateFormat" width="150"></el-table-column>
             <el-table-column label="操作">
                 <template v-slot:default="scope">
-                    <el-button type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
+                    <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑/预览</el-button>
                     <!--删除提示框-->
                     <el-popconfirm
                         confirm-button-text='残忍离去！'
@@ -29,11 +30,12 @@
                         title="确定退出吗？"
                         @confirm="quitDoc(scope.row)"
                     >
-                        <el-button type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">退出</el-button>
+                        <el-button size="mini" type="danger" icon="el-icon-delete" slot="reference" style="margin-left: 1vw">退出</el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
+
         <!--分页-->
         <el-pagination
             background
@@ -101,30 +103,41 @@ export default {
 
         //编辑
         handleEdit(row) {
-            this.axios.get('http://localhost:8088/access/getAccessLevel', {
-                params: {
-                    userId: this.userId,
-                    docId: row.docId
-                }
-            }).then(response => {
-                console.log(response.data)//测试
-                let accessLevel = response.data
-                if(accessLevel === 2){
-                    alert("可写")
-                    let url = "http://192.168.43.202:4000/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
-                    window.open(url, '_blank');
-                }else if(accessLevel === 3){
-                    alert("只读")
-                    let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&type=desktop&action=view";
-                    window.open(url, '_blank');
-                } else {
-                    console.log(response.data)
-                    this.$message.warning("无法编辑文档，请联系创建者！")
-                }
-            }).catch(error => {
-                console.log(error)
-                this.$message.error(error.data)
-            })
+            if(row.status === true){
+                this.axios.get('http://localhost:8088/access/getAccessLevel', {
+                    params: {
+                        userId: this.userId,
+                        docId: row.docId
+                    }
+                }).then(response => {
+                    let accessLevel = response.data
+                    if(accessLevel === 2){
+                        let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId;
+                        window.open(url, '_blank');
+                    }else if(accessLevel === 3){
+                        this.$alert('您没有编辑权限，只能查看该文档', '提示', {
+                            confirmButtonText: '我知道了',
+                            callback: action => {
+                                console.log(action)
+                                // this.$message({
+                                //     type: 'info',
+                                //     message: `action: ${ action }`
+                                // });
+                                let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&type=desktop&action=view";
+                                window.open(url, '_blank');
+                            }
+                        });
+                    } else {
+                        console.log(response.data)
+                        this.$message.warning("无法编辑文档，请联系创建者！")
+                    }
+                }).catch(error => {
+                    console.log(error)
+                    this.$message.error(error.data)
+                })
+            }else {
+                this.$message.warning("无法编辑文档，请联系创建者！")
+            }
         },
 
         //退出
@@ -169,7 +182,6 @@ export default {
             this.pageSize = pageSize;
             this.getShowTableData();
         },
-
 
         //设置时间格式
         dateFormat(row, column) {

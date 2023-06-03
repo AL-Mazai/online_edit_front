@@ -49,89 +49,9 @@
 </template>
 
 <script>
-// import DocumentToolbar from "@/components/DocumentToolbar";
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: "Home",
-    // components:{
-    //     DocumentToolbar
-    // },
-    // data() {
-    //     return {
-    //         userId: this.$userId,
-    //         fileName: '',
-    //         type: '',
-    //
-    //         allDocTableData: [],//所有文档
-    //
-    //         /***分页变量****/
-    //         pageNum: 1,
-    //         pageSize: 5,
-    //         total: 0
-    //     }
-    // },
-    // created() {
-    //     this.getAllDoc()
-    // },
-    // methods: {
-    //     //重置主页搜索框
-    //     reset() {
-    //         this.name = '';
-    //     },
-    //     //获取所有文档
-    //     getAllDoc() {
-    //         if (this.fileName !== '' || this.type !== '') {
-    //             this.pageNum = 1;
-    //         }
-    //         this.axios.get('http://localhost:8088/doc/selectFileByPage', {
-    //             params: {
-    //                 userId:this.userId,
-    //                 pageNum: this.pageNum,
-    //                 pageSize: this.pageSize,
-    //                 fileName: this.fileName,
-    //                 type: this.type,
-    //                 accessLevel: 1
-    //             }
-    //         })
-    //             .then(response => {
-    //                 // console.log(response.data.docList)//测试
-    //                 this.allDocTableData = response.data.docList
-    //                 this.total = response.data.total
-    //             })
-    //             .catch(error => {
-    //                 this.$message.info(error.response.data)
-    //             })
-    //     },
-    //     //编辑文档
-    //     handleEdit() {
-    //
-    //     },
-    //     /********************分页*******************/
-    //     //数据量改变
-    //     handleSizeChange(pageSize) {
-    //         // console.log(pageSize)
-    //         this.pageSize = pageSize
-    //         this.getAllDoc()
-    //     },
-    //     //页数改变
-    //     handleCurrentChange(pageNum) {
-    //         // console.log(pageNum)
-    //         this.pageNum = pageNum
-    //         this.getAllDoc()
-    //     },
-    //     /********************分页*******************/
-    //
-    //     //设置时间格式
-    //     dateFormat(row, column) {
-    //         // console.log(row[column.prop])//测试
-    //         let date = row[column.property];
-    //         if (date == undefined) {
-    //             return "";
-    //         }
-    //         return this.$moment(date).format("YYYY-MM-DD");
-    //     },
-    // },
-
 }
 </script>
 

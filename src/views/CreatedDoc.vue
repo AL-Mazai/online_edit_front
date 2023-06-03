@@ -30,8 +30,8 @@
                 <!--操作-->
                 <el-table-column label="操作">
                     <template v-slot:default="scope">
-                        <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)" style="font-size: smaller;">编辑/预览</el-button>
-                        <el-button size="mini" type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)" style="font-size: smaller;">查看成员</el-button>
+                        <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑/预览</el-button>
+                        <el-button size="mini" type="success" icon="el-icon-view" @click="getUserOfDoc(scope.row.docId)">查看成员</el-button>
                         <!--删除提示框-->
                         <el-popconfirm
                             confirm-button-text='确定'
@@ -298,7 +298,6 @@ export default {
             }
 
         },
-
 
         //删除文档
         deleteDoc(row) {
