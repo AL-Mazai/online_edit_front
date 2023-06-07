@@ -123,7 +123,7 @@ export default {
                                 //     type: 'info',
                                 //     message: `action: ${ action }`
                                 // });
-                                let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&type=desktop&action=view";
+                                let url = "http://43.138.121.194:4001/editor?fileName=" + row.docName + "." + row.type + "&uid=" + this.userId + "&type=desktop&action=view";
                                 window.open(url, '_blank');
                             }
                         });

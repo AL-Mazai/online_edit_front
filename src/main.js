@@ -5,12 +5,10 @@ import store from './store'
 
 //配置全局axios
 import axios from 'axios'
-
 Vue.prototype.axios = axios
 
 //时间插件
 import moment from "moment"
-
 Vue.prototype.$moment = moment
 
 //element-ui组件

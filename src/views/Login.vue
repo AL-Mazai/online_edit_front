@@ -15,7 +15,7 @@
             </el-form-item>
             <el-row style="text-align: center;margin-top: -10px;">
                 <el-link type="primary" @click="$router.push('/register')" style="margin-right: 6px">用户注册</el-link>
-                <el-link type="primary" >忘记密码</el-link>
+<!--                <el-link type="primary" >忘记密码</el-link>-->
             </el-row>
         </el-form>
     </div>

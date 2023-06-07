@@ -178,12 +178,12 @@ export default {
         getAllDocByUserCreate() {
             this.axios.get('http://localhost:8088/doc/selectFileByPage', {
                 params: {
+                    userId: this.userId,
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
                     fileName: this.fileName,
                     type: this.type,
-                    accessLevel: 1,
-                    userId: this.userId
+                    accessLevel: 1
                 }
             }).then(response => {
                 // console.log(response.data)//测试

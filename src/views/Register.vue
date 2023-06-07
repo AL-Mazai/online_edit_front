@@ -51,7 +51,7 @@
                 ></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="doRegister" style="width: 100%"
+                <el-button type="primary" @click="getUserId" style="width: 100%"
                 >注册
                 </el-button
                 >
@@ -68,7 +68,7 @@ export default {
     data() {
         return {
             user: {
-                userId: Math.floor(Math.random() * (100000)) + 100,
+                userId: '',
                 userName: "",
                 email: "",
                 password: "",
@@ -82,8 +82,8 @@ export default {
             if(this.checkPassword === this.user.password){
                 let url = "http://localhost:8088/user/register";
                 this.axios.post(url, this.user).then((res) => {
+                    console.log(this.user)
                     this.$message.success(res.data)
-                    this.$router.push("/login"); //注册成功跳转到登录页面
                 }).catch((err) => {
                     console.log(err);//控制台测试代码
                     this.$message.error(err.response.data)
@@ -92,6 +92,23 @@ export default {
                 this.$message.warning("两次密码不一致！")
             }
         },
+
+        getUserId(){
+            let name_email= {
+                name: this.user.userName,
+                email: this.user.email
+            }
+            this.axios.post("http://43.138.121.194:4001/createUser", name_email).then((res) => {
+                this.user.userId = res.data.userId
+                this.doRegister()
+                this.$router.push("/login"); //注册成功跳转到登录页面
+            }).catch((err) => {
+                console.log(err);//控制台测试代码
+                this.$message.error(err.response.data)
+            });
+
+
+        }
     },
 };
 </script>
