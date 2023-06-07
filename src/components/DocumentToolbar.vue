@@ -4,8 +4,17 @@
         <div>
             <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search"
                       v-model="fileName"></el-input>
-            <el-input style="width: 200px; margin-left: 1px" placeholder="请输入类型" suffix-icon="el-icon-search"
-                      v-model="type"></el-input>
+<!--            <el-input style="width: 200px; margin-left: 1px" placeholder="请输入类型" suffix-icon="el-icon-search"-->
+<!--                      v-model="type"></el-input>-->
+            <el-select v-model="type" placeholder="请选择类型" style="width: 200px; margin-left: 1px">
+                <el-option
+                    v-for="item in DocTypeOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+            </el-select>
+
             <el-button type="primary" style="margin-left: 5px;" @click="searchDoc">搜索 <i
                 class="el-icon-search"></i></el-button>
             <el-button type="primary" style="margin-left: 5px;" @click="refresh">刷新 <i class="el-icon-refresh"></i>
@@ -33,7 +42,6 @@
                                 :value="item.value">
                             </el-option>
                         </el-select>
-                        <!--                        <el-input v-model="createDocForm.type" auto-complete="off"></el-input>-->
                     </el-form-item>
                     <el-form-item label="创建时间" :label-width="formWidth">
                         <el-date-picker v-model="createDocForm.createdTime" type="date"
@@ -71,6 +79,7 @@ export default {
                 status: 'true',
                 isDelete: 1,
             },//新建文档
+
             DocTypeOptions:[
                 {
                     value: 'docx',
@@ -85,6 +94,7 @@ export default {
                     label: 'Excel'
                 },
             ],//文档类型
+
             formWidth: '8vw',//表单宽度
         }
     },
