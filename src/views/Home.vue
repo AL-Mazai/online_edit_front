@@ -1,10 +1,12 @@
 <!--主页-->
 <template>
     <div>
+        <!--增加工具-->
         <div>
             <div>
                 <el-button type="primary" @click="addTool">增加</el-button>
             </div>
+            <!--增加工具对话框-->
             <el-dialog
                 title="添加工具"
                 :visible.sync="addDialogVisible"
@@ -20,12 +22,13 @@
                     <el-form-item label="logo" prop="imageUrl">
                         <el-upload
                             class="avatar-uploader"
-                            action="http://localhost:8088/upload/img"
+                            action="http://localhost:8088/qiniu/image"
                             :show-file-list="false"
                             :on-success="handleAvatarSuccess"
                             :before-upload="beforeAvatarUpload">
-                            <img v-if="imageUrl!=''" :src="imageUrl" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>                        </el-upload>
+                            <img v-if="imageUrl != ''" :src="imageUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
                     </el-form-item>
                 </el-form>
 
@@ -35,79 +38,55 @@
                 </span>
             </el-dialog>
         </div>
+        <!--显示工具列表-->
         <div>
-                        <div class="tool_title">
-                            <div class="tool_title_line"></div>
-                            <p>工具箱</p>
-                            <div class="tool_title_line"></div>
-                        </div>
-                        <div style="display: flex;flex-wrap: wrap">
-                            <div class="tool_cell" style="width: 10vw;height: 10vw">
-                                <a href="https://chatbot.theb.ai/#/chat/1683942008313" target="_blank">
-                                    <img src="../assets/img/div_two.png" style="width: 10vw;height: 10vw">
-                                    <p style="text-align: center">chatGpt</p>
-                                </a>
-                            </div>
-                            <div class="tool_cell" style="width: 10vw;height: 10vw">
-                                <a href="https://www.pdf2go.com/zh" target="_blank">
-                                    <img src="../assets/img/div_one.png" style="width: 10vw;height: 10vw">
-                                    <p style="text-align: center">PDF转换器</p>
-                                </a>
-                            </div>
-                            <div class="tool_cell" style="width: 10vw;height: 10vw">
-                                <a href="https://www.edrawmax.cn/online/zh/workbench" target="_blank">
-                                    <img src="../assets/img/div_three.png" style="width: 10vw;height: 10vw">
-                                    <p style="text-align: center">画图</p>
-                                </a>
-                            </div>
-                            <div class="tool_cell" style="width: 10vw;height: 10vw">
-                                <a href="https://lib-eofbln6vzrxxd5zyeu7bvmuk.booksc.eu/login" target="_blank">
-                                    <img src="../assets/img/div_four.png" style="width: 10vw;height: 10vw">
-                                    <p style="text-align: center">书籍网站</p>
-                                </a>
-                            </div>
-                            <div class="tool_cell" style="width: 10vw;height: 10vw">
-                                <a href="https://www.canva.cn/" target="_blank">
-                                    <img src="../assets/img/div_five.png" style="width: 10vw;height: 10vw">
-                                    <p style="text-align: center">logo设计</p>
-                                </a>
-                            </div>
-                            <div class="tool_cell" style="width: 10vw;height: 10vw">
-                                <a href="https://unbug.github.io/codelf/" target="_blank">
-                                    <img src="../assets/img/div_six.png" style="width: 10vw;height: 10vw">
-                                    <p style="text-align: center">代码命名神器</p>
-                                </a>
-                            </div>
-                        </div>
+            <div class="tool_title">
+                <div class="tool_title_line"></div>
+                <p>工具箱</p>
+                <div class="tool_title_line"></div>
+            </div>
+            <div style="display: flex;flex-wrap: wrap">
+                <div v-for="tool in tools" :key="tool" class="tool_cell">
+                    <a :href=tool.toolUrl target="_blank">
+                        <img :src="tool.logoLink" :tool="tool" style="width: 10vw;height: 10vw"/>
+                        <p style="text-align: center">{{ tool.toolName }}</p>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
 </template>
 
 <script>
+
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: "Home",
     data() {
         return {
             ruleForm: {
-                toolName:'',
-                toolUrl:'',
+                toolId: Math.floor(Math.random() * (100000)) + 100,
+                toolName: '',
+                toolUrl: '',
+                logoLink: '',
             },
             addDialogVisible: false,
             imageUrl: '',
+            tools: [],
         };
     },
+    created() {
+        this.getAllTool()
+    },
     methods: {
+        //增加工具
         addTool() {
             this.addDialogVisible = true
         },
         //图片回显
-        handleAvatarSuccess(res, file) {
-            console.log(res)
-            this.imageUrl = res.data
-            sessionStorage.setItem("imgUrl", this.imageUrl)
-            alert(this.imageUrl)
+        handleAvatarSuccess(res) {
+            this.imageUrl = res
         },
         //图片上传大小限制
         beforeAvatarUpload(file) {
@@ -119,20 +98,23 @@ export default {
         },
         //提交表单
         submitForm() {
-            let _this = this;
-            _this.ruleForm.imageUrl = sessionStorage.getItem("imgUrl")
-            this.axios.post('http://localhost:8088/upload/img', this.ruleForm).then(resp => {
-                if (resp.data.code == 200) {
-                    _this.$alert('《' + _this.ruleForm.name + '》添加成功', '消息', {
-                        confirmButtonText: '确定',
-                        callback: action => {
-                            _this.adddialogVisible = false
-                            // _this.showAllUsers();
-                        }
-                    });
-                }
+            this.ruleForm.logoLink = this.imageUrl
+            console.log(this.ruleForm)
+            this.axios.post("http://localhost:8088/tools/addTool", this.ruleForm).then((res) => {
+                this.$message.success(res.data)
+                this.addDialogVisible = false
+                this.getAllTool()
+            }).catch((err) => {
+                this.$message.error(err.response.data)
             });
         },
+        //获取数据库中所有工具
+        getAllTool() {
+            this.axios.get("http://localhost:8088/tools/getAllTool").then((res) => {
+                console.log(res.data)
+                this.tools = res.data
+            })
+        }
     }
 }
 </script>
@@ -145,9 +127,11 @@ export default {
     position: relative;
     overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
 }
+
 .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
@@ -158,6 +142,7 @@ export default {
 
     border: 1px solid #8c939d;
 }
+
 .avatar {
     width: 178px;
     height: 178px;
@@ -165,11 +150,17 @@ export default {
 }
 
 .tool_cell {
+    width: 10vw;
+    height: 10vw;
+
     background-color: #ffffff;
     border: 2px solid #cccccc;
     border-radius: 27px;
+
     padding: 20px;
+
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+
     margin-bottom: 4vw;
     margin-left: 2vw;
 }
@@ -209,18 +200,16 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /*border: 1px solid red;*/
 }
 
 .tool_title_line {
-    width: 40%;
+    width: 45%;
     height: 2px;
     background-color: #ccc;
 }
 
 .tool_title p {
-    margin: 0 2vw;
+    margin: 0 0.5vw;
     font-size: 2vw;
     font-weight: bold;
 }
