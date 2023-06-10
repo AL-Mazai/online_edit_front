@@ -133,7 +133,7 @@ export default {
     },
     data() {
         return {
-            userId: this.$userId,
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             docId: 0, //文档id，刷新参与成员列表时使用
             fileName: '',
             type: '',

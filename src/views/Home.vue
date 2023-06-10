@@ -46,9 +46,9 @@
                 <div class="tool_title_line"></div>
             </div>
             <div style="display: flex;flex-wrap: wrap">
-                <div v-for="tool in tools" :key="tool" class="tool_cell">
+                <div v-for="tool in tools" :key="tool.toolId" class="tool_cell">
                     <a :href=tool.toolUrl target="_blank">
-                        <img :src="tool.logoLink" :tool="tool" style="width: 10vw;height: 10vw"/>
+                        <img :src="tool.logoLink" style="width: 10vw;height: 10vw"/>
                         <p style="text-align: center">{{ tool.toolName }}</p>
                     </a>
                 </div>
@@ -111,7 +111,6 @@ export default {
         //获取数据库中所有工具
         getAllTool() {
             this.axios.get("http://localhost:8088/tools/getAllTool").then((res) => {
-                console.log(res.data)
                 this.tools = res.data
             })
         }

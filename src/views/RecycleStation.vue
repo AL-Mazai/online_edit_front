@@ -45,16 +45,13 @@
 </template>
 
 <script>
-import DocumentToolbar from "@/components/DocumentToolbar";
 
 export default {
     name: "RecycleStation",
-    components:{
-        DocumentToolbar
-    },
+
     data() {
         return {
-            userId: this.$userId,
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             deleteDocRecord: [],
 
             /***分页变量****/

@@ -61,7 +61,7 @@ export default {
     },
     data() {
         return {
-            userId: this.$userId,
+            userId: (localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}).userId,
             allDocParTableData: [],
             /***分页变量****/
             pageIndex: 1, // 第几页
