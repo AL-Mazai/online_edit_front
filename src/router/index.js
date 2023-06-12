@@ -9,7 +9,7 @@ const routes = [
     {
         path: "/",
         component: Manage,
-        redirect: "/home",
+        redirect: "/create_doc",
         children: [
             {path: "home", name: "主页", component: () => import("../views/Home")},
             {path: "create_doc", name: "我创建的文档", component: () => import("../views/CreatedDoc")},
